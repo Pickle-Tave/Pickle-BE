@@ -18,6 +18,15 @@ public class GlobalResponse {
     private Object data;
     private LocalDateTime timestamp;
 
+    public static GlobalResponse success(int status, Object data) {
+        return GlobalResponse.builder()
+                .success(true)
+                .status(status)
+                .data(data)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
     public static GlobalResponse fail(int status, ErrorResponse errorResponse) {
         return GlobalResponse.builder()
                 .success(false)
