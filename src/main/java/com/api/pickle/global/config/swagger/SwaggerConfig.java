@@ -1,4 +1,4 @@
-package com.api.pickle.global.config;
+package com.api.pickle.global.config.swagger;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
