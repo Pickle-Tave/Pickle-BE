@@ -15,7 +15,7 @@ import static jakarta.persistence.FetchType.LAZY;
 public class ImageTag {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_tag_id")
     private Long id;
 
