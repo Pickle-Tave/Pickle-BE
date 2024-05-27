@@ -1,6 +1,6 @@
 package com.api.pickle.global.error;
 
-import com.api.pickle.global.common.GlobalResponse;
+import com.api.pickle.global.common.response.GlobalResponse;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import org.springframework.http.ResponseEntity;

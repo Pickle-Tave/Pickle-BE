@@ -13,4 +13,6 @@ spring:
         format_sql: true
 
   profiles:
-    include: s3
+    include:
+      - s3
+      - security
