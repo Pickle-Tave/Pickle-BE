@@ -1,4 +1,4 @@
-package com.api.pickle.global.common;
+package com.api.pickle.global.common.response;
 
 import jakarta.servlet.http.HttpServletResponse;
 

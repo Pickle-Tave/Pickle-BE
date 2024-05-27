@@ -1,4 +1,4 @@
-package com.api.pickle.global.common;
+package com.api.pickle.global.common.response;
 
 import com.api.pickle.global.error.ErrorResponse;
 import lombok.AllArgsConstructor;
