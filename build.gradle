@@ -51,6 +51,21 @@ dependencies {
 	//Spring Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// Spring Cloud
+	implementation platform("org.springframework.cloud:spring-cloud-dependencies:2023.0.0")
+
+	// Spring Cloud Open Feign
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	// Oauth2
+	implementation 'org.springframework.security:spring-security-oauth2-client'
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
+
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 tasks.named('test') {
