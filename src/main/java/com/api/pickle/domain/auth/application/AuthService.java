@@ -1,16 +1,16 @@
 package com.api.pickle.domain.auth.application;
 
+import com.api.pickle.domain.auth.dto.AccessTokenDto;
+import com.api.pickle.domain.auth.dto.RefreshTokenDto;
+import com.api.pickle.domain.auth.dto.request.RefreshRequest;
 import com.api.pickle.domain.auth.dto.response.KakaoTokenResponse;
 import com.api.pickle.domain.auth.dto.response.TokenPairResponse;
 import com.api.pickle.domain.member.dao.MemberRepository;
 import com.api.pickle.domain.member.domain.Member;
-import com.api.pickle.domain.member.domain.MemberRole;
 import com.api.pickle.domain.member.domain.OauthInfo;
+import com.api.pickle.global.error.exception.CustomException;
+import com.api.pickle.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,20 +30,24 @@ public class AuthService {
         OauthInfo oauthInfo = OauthInfo.from(oidcUser);
 
         Member member = getMemberByOidcInfo(oidcUser, oauthInfo);
-        setAuthenticationToken(member.getId(), member.getRole());
+        jwtTokenService.setAuthenticationToken(member.getId(), member.getRole());
         return getLoginResponse(member);
     }
 
-    public void setAuthenticationToken(Long memberId, MemberRole role) {
-        UserDetails userDetails =
-                User.withUsername(memberId.toString())
-                        .authorities(role.toString())
-                        .password("")
-                        .build();
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(token);
+    public TokenPairResponse refreshToken(RefreshRequest request){
+        RefreshTokenDto oldRefreshTokenDto = jwtTokenService.validateRefreshToken(request.getRefreshToken());
+
+        if (oldRefreshTokenDto == null){
+            throw new CustomException(ErrorCode.EXPIRED_JWT_TOKEN);
+        }
+        RefreshTokenDto newRefreshTokenDto = jwtTokenService.refreshRefreshToken(oldRefreshTokenDto);
+        AccessTokenDto accessTokenDto = jwtTokenService.refreshAccessToken(getMember(newRefreshTokenDto));
+        return new TokenPairResponse(accessTokenDto.getToken(), newRefreshTokenDto.getToken());
+    }
+
+    private Member getMember(RefreshTokenDto refreshTokenDto){
+        return memberRepository.findById(refreshTokenDto.getMemberId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     private TokenPairResponse getLoginResponse(Member member) {
