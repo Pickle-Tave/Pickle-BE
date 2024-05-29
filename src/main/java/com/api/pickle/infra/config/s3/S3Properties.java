@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "cloud.aws")
 @Getter
+@Setter
 public class S3Properties {
 
     private String accessKey;
