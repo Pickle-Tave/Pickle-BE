@@ -19,8 +19,6 @@ bin/
 
 ### IntelliJ IDEA ###
 .env
-application-s3.yml
-application-security.yml
 .idea
 *.iws
 *.iml

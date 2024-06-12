@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/pickle
-    username: sa
-    password:
+    url: ${H2_DATASOURCE_URL}
+    username: ${H2_DATASOURCE_USERNAME}
+    password: ${H2_DATASOURCE_PASSWORD}
     driver-class-name: org.h2.Driver
 
   jpa:
