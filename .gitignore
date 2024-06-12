@@ -18,8 +18,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-application-s3.yml
-application-security.yml
+.env
 .idea
 *.iws
 *.iml
