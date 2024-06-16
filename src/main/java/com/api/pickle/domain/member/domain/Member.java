@@ -1,6 +1,8 @@
 package com.api.pickle.domain.member.domain;
 
 import com.api.pickle.domain.common.model.BaseTimeEntity;
+import com.api.pickle.global.error.exception.CustomException;
+import com.api.pickle.global.error.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -43,5 +45,16 @@ public class Member extends BaseTimeEntity {
                 .status(MemberStatus.NORMAL)
                 .oauthInfo(oauthInfo)
                 .build();
+    }
+
+    public void withdrawal() {
+        if (this.status == MemberStatus.DELETED) {
+            throw new CustomException(ErrorCode.MEMBER_ALREADY_DELETED);
+        }
+        this.status = MemberStatus.DELETED;
+    }
+
+    public void reEnroll(){
+        this.status = MemberStatus.NORMAL;
     }
 }
