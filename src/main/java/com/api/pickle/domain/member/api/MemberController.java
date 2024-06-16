@@ -25,6 +25,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+
     @Operation(summary = "회원탈퇴", description = "회원탈퇴를 진행합니다.")
     @DeleteMapping("/withdrawal")
     public ResponseEntity<Void> memberWithdrawal(){
