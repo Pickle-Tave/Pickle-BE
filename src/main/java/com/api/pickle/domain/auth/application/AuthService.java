@@ -7,6 +7,7 @@ import com.api.pickle.domain.auth.dto.response.KakaoTokenResponse;
 import com.api.pickle.domain.auth.dto.response.TokenPairResponse;
 import com.api.pickle.domain.member.dao.MemberRepository;
 import com.api.pickle.domain.member.domain.Member;
+import com.api.pickle.domain.member.domain.MemberStatus;
 import com.api.pickle.domain.member.domain.OauthInfo;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
@@ -61,9 +62,13 @@ public class AuthService {
     }
 
     private Member getMemberByOidcInfo(OidcUser oidcUser, OauthInfo oauthInfo) {
-        return memberRepository
+        Member member =  memberRepository
                 .findByOauthInfo(oauthInfo)
                 .orElseGet(() -> saveMember(oauthInfo, getUserSocialName(oidcUser)));
+        if (member.getStatus() == MemberStatus.DELETED){
+            member.reEnroll();
+        }
+        return member;
     }
 
     private Member saveMember(OauthInfo oauthInfo, String nickname) {
