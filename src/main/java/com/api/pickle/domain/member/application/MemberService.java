@@ -22,4 +22,11 @@ public class MemberService {
         refreshTokenRepository.findById(currentMember.getId())
                 .ifPresent(refreshTokenRepository::delete);
     }
+
+    public void memberWithdrawal(){
+        final Member currentMember = memberUtil.getCurrentMember();
+        refreshTokenRepository.findById(currentMember.getId())
+                .ifPresent(refreshTokenRepository::delete);
+        currentMember.withdrawal();
+    }
 }
