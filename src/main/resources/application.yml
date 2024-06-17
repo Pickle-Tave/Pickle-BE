@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: dev
+    group:
+      dev:
+        - s3
+        - security
+      prod:
+        - s3
+        - security
