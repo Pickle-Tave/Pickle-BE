@@ -1,14 +1,13 @@
 package com.api.pickle.domain.member.api;
 
 import com.api.pickle.domain.member.application.MemberService;
+import com.api.pickle.domain.member.dto.response.MyPageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "유저 API", description = "사용자 관련 API입니다.")
 @RequestMapping("/members")
@@ -31,5 +30,12 @@ public class MemberController {
     public ResponseEntity<Void> memberWithdrawal(){
         memberService.memberWithdrawal();
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "마이페이지", description = "마이페이지로 이동합니다.")
+    @GetMapping("/mypage")
+    public ResponseEntity<MyPageResponse> memberMyPage() {
+        MyPageResponse memberMyPageResponse = memberService.getMemberMyPageInfo();
+        return new ResponseEntity<MyPageResponse>(memberMyPageResponse, HttpStatus.OK);
     }
 }
