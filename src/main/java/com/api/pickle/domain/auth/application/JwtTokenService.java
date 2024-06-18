@@ -9,6 +9,7 @@ import com.api.pickle.domain.member.domain.MemberRole;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,9 +49,11 @@ public class JwtTokenService {
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
-    public AccessTokenDto retrieveAccessToken(String accessTokenValue) {
+    public AccessTokenDto retrieveAccessToken(String accessTokenValue) throws ExpiredJwtException{
         try {
             return jwtUtil.parseAccessToken(accessTokenValue);
+        } catch (ExpiredJwtException e) {
+            throw e;
         } catch (Exception e) {
             return null;
         }
