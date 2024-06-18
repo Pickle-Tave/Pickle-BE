@@ -1,7 +1,5 @@
 package com.api.pickle.domain.member.dto.response;
 
-
-import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.member.domain.MemberRole;
 import com.api.pickle.domain.member.domain.MemberStatus;
 import com.api.pickle.domain.member.domain.OauthInfo;
