@@ -21,6 +21,9 @@ public enum ErrorCode {
     MEMBER_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 탈퇴한 회원입니다."),
 
     ALBUM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 앨범을 찾을 수 없습니다"),
+    NOT_ALBUM_OWNER(HttpStatus.BAD_REQUEST, "해당 앨범의 소유자가 아닙니다."),
+
+    ALREADY_SHARED_ALBUM(HttpStatus.BAD_REQUEST, "이미 공유된 앨범입니다.")
     ;
 
     private final HttpStatus status;
