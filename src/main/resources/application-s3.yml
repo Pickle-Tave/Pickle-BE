@@ -1,9 +1,0 @@
-cloud:
-  aws:
-    region: ${AWS_REGION}
-    accessKey: ${AWS_ACCESS_KEY}
-    secretKey: ${AWS_SECRET_KEY}
-    bucket: ${AWS_BUCKET}
-    stack:
-      auto: false
-    endpoint: ${AWS_ENDPOINT}
