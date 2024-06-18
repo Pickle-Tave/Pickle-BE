@@ -32,7 +32,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "마이페이지", description = "마이페이지로 이동합니다.")
+    @Operation(summary = "마이페이지", description = "회원정보를 가져옵니다.")
     @GetMapping("/mypage")
     public ResponseEntity<MyPageResponse> memberMyPage() {
         MyPageResponse memberMyPageResponse = memberService.getMemberMyPageInfo();
