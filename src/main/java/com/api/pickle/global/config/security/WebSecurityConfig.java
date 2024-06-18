@@ -25,9 +25,16 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
         defaultFilterChain(http);
-        http.authorizeHttpRequests((requests) -> requests.requestMatchers("**").permitAll())
-            .addFilterBefore(
-                    jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.authorizeHttpRequests(
+                requests ->
+                        requests.requestMatchers("**")
+                                .permitAll()
+                                .requestMatchers("/pickle-actuator/**")
+                                .permitAll());
+        
+        http.addFilterBefore(
+                jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
