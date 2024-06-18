@@ -8,3 +8,17 @@ spring:
       prod:
         - s3
         - security
+
+management:
+  endpoints:
+    enabled-by-default: false
+    jmx:
+      exposure:
+        exclude: "*"
+    web:
+      exposure:
+        include: health
+      base-path: /pickle-actuator
+  endpoint:
+    health:
+      enabled: true
