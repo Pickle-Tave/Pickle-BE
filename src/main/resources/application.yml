@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: dev
+    group:
+      dev:
+        - s3
+        - security
+      prod:
+        - s3
+        - security
+
+management:
+  endpoints:
+    enabled-by-default: false
+    jmx:
+      exposure:
+        exclude: "*"
+    web:
+      exposure:
+        include: health
+      base-path: /pickle-actuator
+  endpoint:
+    health:
+      enabled: true

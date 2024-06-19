@@ -1,0 +1,13 @@
+oauth:
+  kakao:
+    client:
+      id: ${KAKAO_CLIENT_ID}
+      secret: ${KAKAO_CLIENT_SECRET}
+      redirectUri: ${KAKAO_CLIENT_REDIRECT_URI}
+      grantType: ${KAKAO_CLIENT_GRANT_TYPE}
+jwt:
+  access-token-secret: ${JWT_ACCESS_TOKEN}
+  refresh-token-secret: ${JWT_REFRESH_TOKEN}
+  access-token-expiration-time: ${JWT_ACCESS_TOKEN_EXPIRATION_TIME}
+  refresh-token-expiration-time: ${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
+  issuer: ${JWT_ISSUER}
