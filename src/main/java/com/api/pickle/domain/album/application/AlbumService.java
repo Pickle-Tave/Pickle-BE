@@ -23,6 +23,6 @@ public class AlbumService {
         Album newAlbum = Album.createPrivateAlbum(albumName);
 
         albumRepository.save(newAlbum);
-        participantRepository.save(Participant.createParticipant(newAlbum, currentMember));
+        participantRepository.save(Participant.createHostParticipant(newAlbum, currentMember));
     }
 }
