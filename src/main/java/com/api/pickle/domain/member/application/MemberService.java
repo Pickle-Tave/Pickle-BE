@@ -6,6 +6,7 @@ import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.member.dto.response.MyPageResponse;
 import com.api.pickle.domain.membertag.dao.MemberTagRepository;
 import com.api.pickle.domain.membertag.domain.MemberTag;
+import com.api.pickle.domain.membertag.dto.MemberTagResponse;
 import com.api.pickle.domain.tag.dao.TagRepository;
 import com.api.pickle.domain.tag.domain.Tag;
 import com.api.pickle.global.error.exception.CustomException;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,7 +56,9 @@ public class MemberService {
     public void createMemberHashTag(String name) {
         final Member currentMember = memberUtil.getCurrentMember();
         List<MemberTag> memberTagList = memberTagRepository.findAllByMemberId(currentMember.getId());
-
+        if (memberTagList.size() == 5) {
+            throw new CustomException(ErrorCode.EXCEED_HASHTAG_NUMBER);
+        }
         for (MemberTag memberTag : memberTagList) {
             if (name.equals(memberTag.getTag().getName())) {
                 throw new CustomException(ErrorCode.HASHTAG_ALREADY_EXIST);
@@ -66,6 +69,17 @@ public class MemberService {
 
         tagRepository.save(hashTag);
         memberTagRepository.save(memberTag);
+    }
+
+    public List<MemberTagResponse> showMemberHashTag() {
+        final Member currentMember = memberUtil.getCurrentMember();
+        List<MemberTag> memberTagList = memberTagRepository.findAllByMemberId(currentMember.getId());
+        return memberTagList.stream()
+                .map(memberTag -> MemberTagResponse.builder()
+                        .id(memberTag.getTag().getId())
+                        .text(memberTag.getTag().getName()).build())
+                .collect(Collectors.toList());
 
     }
+
 }
