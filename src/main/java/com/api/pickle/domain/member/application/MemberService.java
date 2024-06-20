@@ -8,10 +8,15 @@ import com.api.pickle.domain.membertag.dao.MemberTagRepository;
 import com.api.pickle.domain.membertag.domain.MemberTag;
 import com.api.pickle.domain.tag.dao.TagRepository;
 import com.api.pickle.domain.tag.domain.Tag;
+import com.api.pickle.global.error.exception.CustomException;
+import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -49,6 +54,13 @@ public class MemberService {
 
     public void createMemberHashTag(String name) {
         final Member currentMember = memberUtil.getCurrentMember();
+        List<MemberTag> memberTagList = memberTagRepository.findAllByMemberId(currentMember.getId());
+
+        for (MemberTag memberTag : memberTagList) {
+            if (name.equals(memberTag.getTag().getName())) {
+                throw new CustomException(ErrorCode.HASHTAG_ALREADY_EXIST);
+            }
+        }
         Tag hashTag = Tag.createTag(name);
         MemberTag memberTag = MemberTag.createMemberTag(currentMember,hashTag);
 

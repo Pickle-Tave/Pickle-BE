@@ -21,6 +21,7 @@ public enum ErrorCode {
     MEMBER_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 탈퇴한 회원입니다."),
 
     ALBUM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 앨범을 찾을 수 없습니다"),
+    HASHTAG_ALREADY_EXIST(HttpStatus.CONFLICT,"해당 해시태그가 이미 존재합니다.")
     ;
 
     private final HttpStatus status;
