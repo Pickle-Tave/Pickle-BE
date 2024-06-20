@@ -28,7 +28,7 @@ public class SharedAlbumService {
     private final ParticipantRepository participantRepository;
     private final MemberUtil memberUtil;
 
-    public SharedLinkResponse getSharedAlbumLink(Long albumId){
+    public SharedLinkResponse getSharedAlbumLink(Long albumId, String password){
         final Member currentMember = memberUtil.getCurrentMember();
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
@@ -36,7 +36,7 @@ public class SharedAlbumService {
 
         validateAlbumOwner(currentMember, album);
 
-        return new SharedLinkResponse(saveSharedAlbum(album).getLink());
+        return new SharedLinkResponse(saveSharedAlbum(album, password).getLink());
     }
 
     private void validateAlbumOwner(Member member, Album album){
@@ -46,12 +46,9 @@ public class SharedAlbumService {
         }
     }
 
-    private SharedAlbum saveSharedAlbum(Album album) {
+    private SharedAlbum saveSharedAlbum(Album album, String password) {
         final int LINK_LENGTH = 30;
-        final int PASSWORD_LENGTH = 10;
-
         String newLink = RandomUtil.generateToken(LINK_LENGTH);
-        String password = RandomUtil.generateToken(PASSWORD_LENGTH);
         return sharedAlbumRepository.save(SharedAlbum.createSharedAlbum(album, newLink, password));
     }
 }
