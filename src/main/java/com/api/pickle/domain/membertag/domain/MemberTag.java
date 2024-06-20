@@ -4,9 +4,7 @@ import com.api.pickle.domain.common.model.BaseTimeEntity;
 import com.api.pickle.domain.tag.domain.Tag;
 import com.api.pickle.domain.member.domain.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -28,4 +26,17 @@ public class MemberTag extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+
+    @Builder
+    private MemberTag(Member member , Tag tag) {
+        this.member = member;
+        this.tag = tag;
+    }
+    public static MemberTag createMemberTag(Member member, Tag tag) {
+        return MemberTag.builder()
+                .member(member)
+                .tag(tag)
+                .build();
+    }
 }

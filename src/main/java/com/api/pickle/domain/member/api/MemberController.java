@@ -2,6 +2,7 @@ package com.api.pickle.domain.member.api;
 
 import com.api.pickle.domain.member.application.MemberService;
 import com.api.pickle.domain.member.dto.response.MyPageResponse;
+import com.api.pickle.domain.tag.dto.request.TagCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,12 @@ public class MemberController {
     public ResponseEntity<MyPageResponse> memberMyPage() {
         MyPageResponse memberMyPageResponse = memberService.getMemberMyPageInfo();
         return new ResponseEntity<MyPageResponse>(memberMyPageResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "해시태그 만들기", description = "사용자 해시태그를 만듭니다.")
+    @PostMapping("/createTag")
+    public ResponseEntity<Void> createHashTag(@RequestBody TagCreateRequest request) {
+        memberService.createMemberHashTag(request.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
