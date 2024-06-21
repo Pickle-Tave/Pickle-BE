@@ -56,14 +56,8 @@ public class MemberService {
     public void createMemberHashTag(String name) {
         final Member currentMember = memberUtil.getCurrentMember();
         List<MemberTag> memberTagList = memberTagRepository.findAllByMemberId(currentMember.getId());
-        if (memberTagList.size() == 5) {
-            throw new CustomException(ErrorCode.EXCEED_HASHTAG_NUMBER);
-        }
-        for (MemberTag memberTag : memberTagList) {
-            if (name.equals(memberTag.getTag().getName())) {
-                throw new CustomException(ErrorCode.HASHTAG_ALREADY_EXIST);
-            }
-        }
+        validateTagSize(memberTagList);
+        validateAlreadyExist(name, memberTagList);
         Tag hashTag = Tag.createTag(name);
         MemberTag memberTag = MemberTag.createMemberTag(currentMember,hashTag);
 
@@ -81,5 +75,17 @@ public class MemberService {
                 .collect(Collectors.toList());
 
     }
-
+    
+    private void validateAlreadyExist(String name, List<MemberTag> memberTagList) {
+        for (MemberTag memberTag : memberTagList) {
+            if (name.equals(memberTag.getTag().getName())) {
+                throw new CustomException(ErrorCode.HASHTAG_ALREADY_EXIST);
+            }
+        }
+    }
+    private void validateTagSize(List<MemberTag> memberTagList) {
+        if (memberTagList.size() == 5) {
+            throw new CustomException(ErrorCode.EXCEED_HASHTAG_NUMBER);
+        }
+    }
 }
