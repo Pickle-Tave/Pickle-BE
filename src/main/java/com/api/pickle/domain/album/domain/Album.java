@@ -1,6 +1,8 @@
 package com.api.pickle.domain.album.domain;
 
 import com.api.pickle.domain.common.model.BaseTimeEntity;
+import com.api.pickle.global.error.exception.CustomException;
+import com.api.pickle.global.error.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,5 +36,16 @@ public class Album extends BaseTimeEntity {
                 .name(name)
                 .status(SharingStatus.PRIVATE)
                 .build();
+    }
+
+    public void switchStatus(SharingStatus newStatus) {
+        if (status == newStatus && newStatus == SharingStatus.PUBLIC) {
+            throw new CustomException(ErrorCode.ALREADY_SHARED_ALBUM);
+        }
+        this.status = newStatus;
+    }
+
+    public void updateAlbumName(String newName){
+        this.name = newName;
     }
 }
