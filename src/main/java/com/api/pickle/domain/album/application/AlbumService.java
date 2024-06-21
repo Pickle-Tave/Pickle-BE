@@ -6,6 +6,7 @@ import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.domain.participant.domain.Participant;
+import com.api.pickle.domain.sharedalbum.application.SharedAlbumService;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AlbumService {
     private final AlbumRepository albumRepository;
     private final ParticipantRepository participantRepository;
+    private final SharedAlbumService sharedAlbumService;
     private final MemberUtil memberUtil;
 
     public void createAlbum(String albumName){
@@ -33,12 +35,8 @@ public class AlbumService {
         final Member currentMember = memberUtil.getCurrentMember();
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
-        validateAlbumOwner(currentMember, album);
+        sharedAlbumService.validateAlbumOwner(currentMember, album);
         album.updateAlbumName(newAlbumName);
         return new UpdateAlbumResponse(albumId, newAlbumName);
-    }
-
-    private void validateAlbumOwner(Member member, Album album){
-
     }
 }
