@@ -3,6 +3,9 @@ package com.api.pickle.domain.sharedalbum.application;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.album.domain.SharingStatus;
+import com.api.pickle.domain.participant.domain.Participant;
+import com.api.pickle.domain.sharedalbum.dto.request.SharedAlbumParticipateRequest;
+import com.api.pickle.domain.sharedalbum.dto.response.SharedAlbumParticipateResponse;
 import com.api.pickle.domain.sharedalbum.dto.response.SharedLinkResponse;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
@@ -34,6 +37,31 @@ public class SharedAlbumService {
         validateAlbumOwner(currentMember, album);
 
         return new SharedLinkResponse(saveSharedAlbum(album, password).getLink());
+    }
+
+    public SharedAlbumParticipateResponse participateSharedAlbum(SharedAlbumParticipateRequest request){
+        final Member currentMember = memberUtil.getCurrentMember();
+        SharedAlbum sharedAlbum = sharedAlbumRepository.findByLink(request.getAlbumLink())
+                .orElseThrow(() -> new CustomException(ErrorCode.SHARED_ALBUM_NOT_FOUND));
+
+        validateSharedAlbumPassword(sharedAlbum, request.getAlbumPassword());
+        validateAlreadyJoined(currentMember, sharedAlbum.getAlbum());
+
+        Participant participant = Participant.createGuestParticipant(sharedAlbum.getAlbum(), currentMember);
+        participantRepository.save(participant);
+        return new SharedAlbumParticipateResponse(participant.getAlbum().getId(), participant.getAlbum().getName());
+    }
+
+    private void validateAlreadyJoined(Member member, Album album){
+        if (participantRepository.findByMemberAndAlbum(member, album).isPresent()){
+            throw new CustomException(ErrorCode.MEMBER_ALREADY_JOINED);
+        }
+    }
+
+    private void validateSharedAlbumPassword(SharedAlbum sharedAlbum, String password){
+        if (!sharedAlbum.getPassword().equals(password)){
+            throw new CustomException(ErrorCode.SHARED_ALBUM_PASSWORD_MISMATCH);
+        }
     }
 
     public void validateAlbumOwner(Member member, Album album){
