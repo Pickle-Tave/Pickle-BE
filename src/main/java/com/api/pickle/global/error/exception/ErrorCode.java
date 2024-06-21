@@ -24,6 +24,10 @@ public enum ErrorCode {
     NOT_ALBUM_OWNER(HttpStatus.BAD_REQUEST, "해당 앨범의 소유자가 아닙니다."),
 
     ALREADY_SHARED_ALBUM(HttpStatus.BAD_REQUEST, "이미 공유된 앨범입니다."),
+
+    ALBUM_KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "검색어를 포함하는 앨범을 찾을 수 없습니다."),
+    ALBUM_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상태의 앨범을 찾을 수 없습니다.")
+
     SHARED_ALBUM_NOT_FOUND(HttpStatus.BAD_REQUEST, "공유 앨범을 찾을 수 없습니다."),
     SHARED_ALBUM_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     MEMBER_ALREADY_JOINED(HttpStatus.BAD_REQUEST, "이미 참여한 앨범입니다.")
