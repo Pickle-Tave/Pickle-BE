@@ -6,4 +6,6 @@ import java.util.List;
 public interface AlbumRepositoryCustom {
 
     List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword);
+
+    List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus);
 }

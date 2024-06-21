@@ -40,10 +40,17 @@ public class AlbumController {
         return albumService.updateAlbumName(albumId, request.getNewAlbumName());
     }
 
-    @Operation(summary = "앨범명 검색", description = "앨범명으로 검색합니다.")
-    @GetMapping("/search")
-    public List<AlbumSearchResponse> searchAlbum(@Parameter(description = "검색할 앨범의 이름 키워드", example = "앨범")
+    @Operation(summary = "앨범명 검색", description = "앨범명으로 검색하고 최신순으로 조회합니다.")
+    @GetMapping("/search/keyword")
+    public List<AlbumSearchResponse> searchAlbumKeyword(@Parameter(description = "검색할 앨범의 이름 키워드", example = "앨범")
                                                      @RequestParam String keyword) {
         return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(keyword);
+    }
+
+    @Operation(summary = "앨범상태 검색", description = "앨범상태로 검색하고 최신순으로 조회합니다.")
+    @GetMapping("/search/status")
+    public List<AlbumSearchResponse> searchAlbumStatus(@Parameter(description = "검색할 앨범의 공유상태", example = "PRIVATE OR PUBLIC")
+                                                 @RequestParam String albumStatus) {
+        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
     }
 }
