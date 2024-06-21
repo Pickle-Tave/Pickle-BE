@@ -38,10 +38,14 @@ public class Album extends BaseTimeEntity {
                 .build();
     }
 
-    public void switchStatus(SharingStatus newStatus){
-        if (status == newStatus && newStatus == SharingStatus.PUBLIC){
+    public void switchStatus(SharingStatus newStatus) {
+        if (status == newStatus && newStatus == SharingStatus.PUBLIC) {
             throw new CustomException(ErrorCode.ALREADY_SHARED_ALBUM);
         }
         this.status = newStatus;
+    }
+
+    public void updateAlbumName(String newName){
+        this.name = newName;
     }
 }
