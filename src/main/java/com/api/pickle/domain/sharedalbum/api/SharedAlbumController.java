@@ -1,6 +1,8 @@
 package com.api.pickle.domain.sharedalbum.api;
 
+import com.api.pickle.domain.sharedalbum.dto.request.SharedAlbumParticipateRequest;
 import com.api.pickle.domain.sharedalbum.dto.request.SwitchToSharedAlbumRequest;
+import com.api.pickle.domain.sharedalbum.dto.response.SharedAlbumParticipateResponse;
 import com.api.pickle.domain.sharedalbum.dto.response.SharedLinkResponse;
 import com.api.pickle.domain.sharedalbum.application.SharedAlbumService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,5 +22,11 @@ public class SharedAlbumController {
     public SharedLinkResponse switchToPublicAlbum(@PathVariable Long albumId,
                                                   @RequestBody SwitchToSharedAlbumRequest request){
         return sharedAlbumService.getSharedAlbumLink(albumId, request.getAlbumPassword());
+    }
+
+    @Operation(summary = "공유 앨범 참여", description = "링크와 비밀번호를 통해 공유앨범에 참여합니다.")
+    @PostMapping("/participants")
+    public SharedAlbumParticipateResponse participateSharedAlbum(@RequestBody SharedAlbumParticipateRequest request){
+        return sharedAlbumService.participateSharedAlbum(request);
     }
 }
