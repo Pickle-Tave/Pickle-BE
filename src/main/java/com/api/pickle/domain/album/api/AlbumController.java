@@ -24,7 +24,6 @@ import java.util.List;
 public class AlbumController {
 
     private final AlbumService albumService;
-    private final AlbumRepository albumRepository;
 
     @Operation(summary = "앨범 생성", description = "앨범 생성을 진행합니다.")
     @PostMapping("/create")
@@ -44,13 +43,13 @@ public class AlbumController {
     @GetMapping("/search/keyword")
     public List<AlbumSearchResponse> searchAlbumKeyword(@Parameter(description = "검색할 앨범의 이름 키워드", example = "앨범")
                                                      @RequestParam String keyword) {
-        return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(keyword);
+        return albumService.searchKeywordInAlbumOrderByCreatedDateDesc(keyword);
     }
 
     @Operation(summary = "앨범상태 검색", description = "앨범상태로 검색하고 최신순으로 조회합니다.")
     @GetMapping("/search/status")
     public List<AlbumSearchResponse> searchAlbumStatus(@Parameter(description = "검색할 앨범의 공유상태", example = "PRIVATE OR PUBLIC")
                                                  @RequestParam String albumStatus) {
-        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
+        return albumService.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
     }
 }
