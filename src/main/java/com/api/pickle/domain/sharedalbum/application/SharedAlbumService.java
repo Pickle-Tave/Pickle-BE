@@ -6,7 +6,6 @@ import com.api.pickle.domain.album.domain.SharingStatus;
 import com.api.pickle.domain.sharedalbum.dto.response.SharedLinkResponse;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
-import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.domain.sharedalbum.dao.SharedAlbumRepository;
 import com.api.pickle.domain.sharedalbum.domain.SharedAlbum;
 import com.api.pickle.global.error.exception.CustomException;
@@ -16,8 +15,6 @@ import com.api.pickle.global.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Transactional
 @Service
@@ -39,11 +36,9 @@ public class SharedAlbumService {
         return new SharedLinkResponse(saveSharedAlbum(album, password).getLink());
     }
 
-    private void validateAlbumOwner(Member member, Album album){
-        Optional<Participant> optionalParticipant = participantRepository.findByMemberAndAlbum(member, album);
-        if (optionalParticipant.isEmpty()){
-            throw new CustomException(ErrorCode.NOT_ALBUM_OWNER);
-        }
+    public void validateAlbumOwner(Member member, Album album){
+        participantRepository.findByMemberAndAlbum(member, album)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
     }
 
     private SharedAlbum saveSharedAlbum(Album album, String password) {
