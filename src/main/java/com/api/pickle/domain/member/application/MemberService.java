@@ -1,7 +1,6 @@
 package com.api.pickle.domain.member.application;
 
 import com.api.pickle.domain.auth.dao.RefreshTokenRepository;
-import com.api.pickle.domain.member.dao.MemberRepository;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.member.dto.response.MyPageResponse;
 import com.api.pickle.global.util.MemberUtil;
@@ -14,9 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final MemberUtil memberUtil;
+    private final MemberUtil memberUtil;;
 
     public void memberLogout(){
         final Member currentMember = memberUtil.getCurrentMember();

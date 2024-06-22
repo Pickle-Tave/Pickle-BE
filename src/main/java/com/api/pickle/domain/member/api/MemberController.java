@@ -38,4 +38,5 @@ public class MemberController {
         MyPageResponse memberMyPageResponse = memberService.getMemberMyPageInfo();
         return new ResponseEntity<MyPageResponse>(memberMyPageResponse, HttpStatus.OK);
     }
+
 }
