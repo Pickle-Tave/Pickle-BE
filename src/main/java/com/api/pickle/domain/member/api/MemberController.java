@@ -2,16 +2,12 @@ package com.api.pickle.domain.member.api;
 
 import com.api.pickle.domain.member.application.MemberService;
 import com.api.pickle.domain.member.dto.response.MyPageResponse;
-import com.api.pickle.domain.membertag.dto.MemberTagResponse;
-import com.api.pickle.domain.tag.dto.request.TagCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "유저 API", description = "사용자 관련 API입니다.")
 @RequestMapping("/members")
@@ -43,16 +39,4 @@ public class MemberController {
         return new ResponseEntity<MyPageResponse>(memberMyPageResponse, HttpStatus.OK);
     }
 
-    @Operation(summary = "해시태그 만들기", description = "사용자 해시태그를 만듭니다.")
-    @PostMapping("/createTag")
-    public ResponseEntity<Void> createHashTag(@RequestBody TagCreateRequest request) {
-        memberService.createMemberHashTag(request.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @Operation(summary = "해시태그 목록", description = "사용자 해시태그 목록을 보여줍니다.")
-    @GetMapping("/hashtaglist")
-    public List<MemberTagResponse> showHashTagList() {
-        return memberService.showMemberHashTag();
-    }
 }
