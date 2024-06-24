@@ -5,9 +5,11 @@ spring:
       dev:
         - s3
         - security
+        - redis
       prod:
         - s3
         - security
+        - redis
 
 management:
   endpoints:
