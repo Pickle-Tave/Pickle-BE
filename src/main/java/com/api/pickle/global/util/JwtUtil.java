@@ -122,4 +122,8 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token);
     }
+
+    public long getRefreshTokenExpirationTime() {
+        return jwtProperties.getRefreshTokenExpirationTime();
+    }
 }

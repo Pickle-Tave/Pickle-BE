@@ -1,28 +1,33 @@
 package com.api.pickle.domain.auth.domain;
 
-import com.api.pickle.domain.common.model.BaseTimeEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
-@Entity
 @Getter
 @NoArgsConstructor
-public class RefreshToken extends BaseTimeEntity {
+@RedisHash(value = "refreshToken")
+public class RefreshToken{
     @Id
     private Long memberId;
 
     private String token;
 
+    @TimeToLive
+    private long ttl;
+
     @Builder
-    public RefreshToken(Long memberId, String token) {
+    public RefreshToken(Long memberId, String token, long ttl) {
         this.memberId = memberId;
         this.token = token;
+        this.ttl = ttl;
     }
 
-    public void updateRefreshToken(String newToken){
+    public void updateRefreshToken(String newToken, long newTtl){
         this.token = newToken;
+        this.ttl = newTtl;
     }
 }
