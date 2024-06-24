@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile: "test"
+
+cloud:
+  aws:
+    region: ${AWS_REGION}
+    accessKey: ${AWS_ACCESS_KEY}
+    secretKey: ${AWS_SECRET_KEY}
+    bucket: ${AWS_BUCKET}
+    stack:
+      auto: false
+    endpoint: https://s3.ap-northeast-2.amazonaws.com
