@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface AlbumRepositoryCustom {
 
-    List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword);
+    List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(Long memberId, String keyword);
 
-    List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus);
+    List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(Long memberId, String albumStatus);
 
     List<AlbumSearchResponse> findAllAlbumOfMemberByCreatedDateDesc(Long memberId);
 }
