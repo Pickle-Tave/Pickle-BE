@@ -46,11 +46,13 @@ public class AlbumService {
     }
 
     public List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword) {
-        return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(keyword);
+        final Member currentMember = memberUtil.getCurrentMember();
+        return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(currentMember.getId(), keyword);
     }
 
     public List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus) {
-        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
+        final Member currentMember = memberUtil.getCurrentMember();
+        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(currentMember.getId(), albumStatus);
     }
 
     public List<AlbumSearchResponse> findAllAlbumOfMember(){

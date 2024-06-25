@@ -17,16 +17,18 @@ public class AlbumRepositoryImpl implements AlbumRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword) {
-        return searchAlbums(
+    public List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(Long memberId, String keyword) {
+        return albumsFilter(
+                memberId,
                 album.name.containsIgnoreCase(keyword),
                 ErrorCode.ALBUM_KEYWORD_NOT_FOUND
         );
     }
 
     @Override
-    public List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus) {
-        return searchAlbums(
+    public List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(Long memberId, String albumStatus) {
+        return albumsFilter(
+                memberId,
                 album.status.eq(SharingStatus.valueOf(albumStatus)),
                 ErrorCode.ALBUM_STATUS_NOT_FOUND
         );
@@ -34,6 +36,14 @@ public class AlbumRepositoryImpl implements AlbumRepositoryCustom {
 
     @Override
     public List<AlbumSearchResponse> findAllAlbumOfMemberByCreatedDateDesc(Long memberId) {
+        return albumsFilter(
+                memberId,
+                null,
+                ErrorCode.ALBUM_NOT_EXISTS
+        );
+    }
+
+    private List<AlbumSearchResponse> albumsFilter(Long memberId, BooleanExpression condition, ErrorCode errorCode) {
         List<AlbumSearchResponse> results = queryFactory
                 .select(new QAlbumSearchResponse(
                         album.id,
@@ -41,23 +51,7 @@ public class AlbumRepositoryImpl implements AlbumRepositoryCustom {
                         album.status.stringValue()))
                 .from(QParticipant.participant)
                 .join(QParticipant.participant.album, album)
-                .where(QParticipant.participant.member.id.eq(memberId))
-                .orderBy(album.createdDate.desc())
-                .fetch();
-        if (results.isEmpty()){
-            throw new CustomException(ErrorCode.ALBUM_NOT_EXISTS);
-        }
-        return results;
-    }
-
-    private List<AlbumSearchResponse> searchAlbums(BooleanExpression condition, ErrorCode errorCode) {
-        List<AlbumSearchResponse> results = queryFactory
-                .select(new QAlbumSearchResponse(
-                        album.id,
-                        album.name,
-                        album.status.stringValue()))
-                .from(album)
-                .where(condition)
+                .where(QParticipant.participant.member.id.eq(memberId). and(condition))
                 .orderBy(album.createdDate.desc())
                 .fetch();
 
