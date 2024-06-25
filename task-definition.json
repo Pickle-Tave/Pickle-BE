@@ -78,10 +78,6 @@
                 {
                     "name": "AWS_ENDPOINT",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_ENDPOINT::"
-                },
-                {
-                    "name": "REDIS_HOST",
-                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:REDIS_HOST::"
                 }
             ],
             "ulimits": [],
