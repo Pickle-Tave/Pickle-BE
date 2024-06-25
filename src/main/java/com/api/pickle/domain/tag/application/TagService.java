@@ -48,6 +48,10 @@ public class TagService {
 
     }
 
+    public void deleteMemberHashTag(Long memberTagId) {
+       tagRepository.findById(memberTagId).ifPresent(tag -> deleteTag(memberTagId));
+    }
+
     private void validateAlreadyExist(String name, List<MemberTag> memberTagList) {
         for (MemberTag memberTag : memberTagList) {
             if (name.equals(memberTag.getTag().getName())) {
@@ -60,4 +64,10 @@ public class TagService {
             throw new CustomException(ErrorCode.EXCEED_HASHTAG_NUMBER);
         }
     }
+
+    private void deleteTag(Long memberTagId) {
+        tagRepository.deleteById(memberTagId);
+        memberTagRepository.deleteById(memberTagId);
+    }
+
 }
