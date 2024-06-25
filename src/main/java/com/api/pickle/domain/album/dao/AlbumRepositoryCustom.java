@@ -8,4 +8,6 @@ public interface AlbumRepositoryCustom {
     List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword);
 
     List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus);
+
+    List<AlbumSearchResponse> findAllAlbumOfMemberByCreatedDateDesc(Long memberId);
 }

@@ -2,7 +2,6 @@ package com.api.pickle.domain.album.api;
 
 
 import com.api.pickle.domain.album.application.AlbumService;
-import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.dto.request.AlbumCreateRequest;
 import com.api.pickle.domain.album.dto.request.UpdateAlbumRequest;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
@@ -51,5 +50,11 @@ public class AlbumController {
     public List<AlbumSearchResponse> searchAlbumStatus(@Parameter(description = "검색할 앨범의 공유상태", example = "PRIVATE OR PUBLIC")
                                                  @RequestParam String albumStatus) {
         return albumService.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
+    }
+
+    @Operation(summary = "사용자 앨범 조회", description = "사용자가 참여 중인 모든 앨범을 조회합니다.")
+    @GetMapping("/list")
+    public List<AlbumSearchResponse> albumFindAll(){
+        return albumService.findAllAlbumOfMember();
     }
 }
