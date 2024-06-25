@@ -22,14 +22,14 @@ public class TagController {
     private final TagService tagService;
 
     @Operation(summary = "해시태그 만들기", description = "사용자 해시태그를 만듭니다.")
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Void> createHashTag(@RequestBody TagCreateRequest request) {
         tagService.createMemberHashTag(request.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "해시태그 목록 조회", description = "사용자 해시태그 목록을 보여줍니다.")
-    @GetMapping
+    @GetMapping("/list")
     public List<MemberTagResponse> showHashTagList() {
         return tagService.showMemberHashTag();
     }
