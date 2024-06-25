@@ -78,8 +78,41 @@
                 {
                     "name": "AWS_ENDPOINT",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_ENDPOINT::"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:REDIS_HOST::"
                 }
             ],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/pickle-family",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "redis",
+            "image": "redis:alpine",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 6379,
+                    "hostPort": 6379,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
             "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
