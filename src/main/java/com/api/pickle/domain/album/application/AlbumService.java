@@ -52,4 +52,9 @@ public class AlbumService {
     public List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus) {
         return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
     }
+
+    public List<AlbumSearchResponse> findAllAlbumOfMember(){
+        final Member currentMember = memberUtil.getCurrentMember();
+        return albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId());
+    }
 }
