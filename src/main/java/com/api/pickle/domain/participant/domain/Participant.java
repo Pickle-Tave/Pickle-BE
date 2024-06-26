@@ -28,16 +28,12 @@ public class Participant {
     private Album album;
 
     @Enumerated(EnumType.STRING)
-    private Bookmark bookmark;
-
-    @Enumerated(EnumType.STRING)
     private HostStatus hostStatus;
 
     @Builder
-    public Participant(Album album, Member member, Bookmark bookmark, HostStatus hostStatus){
+    public Participant(Album album, Member member, HostStatus hostStatus){
         this.album = album;
         this.member = member;
-        this.bookmark = bookmark;
         this.hostStatus = hostStatus;
     }
 
@@ -45,7 +41,6 @@ public class Participant {
         return Participant.builder()
                 .album(album)
                 .member(member)
-                .bookmark(Bookmark.UNMARKED)
                 .hostStatus(HostStatus.HOST)
                 .build();
     }
@@ -54,7 +49,6 @@ public class Participant {
         return Participant.builder()
                 .album(album)
                 .member(member)
-                .bookmark(Bookmark.UNMARKED)
                 .hostStatus(HostStatus.GUEST)
                 .build();
     }
