@@ -78,6 +78,14 @@
                 {
                     "name": "AWS_ENDPOINT",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_ENDPOINT::"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_ACCESS_KEY::"
+                },
+                {
+                    "name": "AWS_SECRET_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_SECRET_KEY::"
                 }
             ],
             "ulimits": [],
