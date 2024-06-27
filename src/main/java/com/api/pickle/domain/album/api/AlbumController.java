@@ -10,6 +10,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,21 +45,26 @@ public class AlbumController {
 
     @Operation(summary = "앨범명 검색", description = "앨범명으로 검색하고 최신순으로 조회합니다.")
     @GetMapping("/search/keyword")
-    public List<AlbumSearchResponse> searchAlbumKeyword(@Parameter(description = "검색할 앨범의 이름 키워드", example = "앨범")
-                                                     @RequestParam String keyword) {
-        return albumService.searchKeywordInAlbumOrderByCreatedDateDesc(keyword);
+    public Slice<AlbumSearchResponse> searchAlbumKeyword(@Parameter(description = "검색할 앨범의 이름 키워드", example = "앨범")
+                                                         @RequestParam String keyword,
+                                                         @RequestParam(required = false) Long lastAlbumId,
+                                                         @RequestParam(value = "size", defaultValue = "1") int pageSize) {
+        return albumService.searchKeywordInAlbumOrderByCreatedDateDesc(keyword, pageSize, lastAlbumId);
     }
 
     @Operation(summary = "앨범상태 검색", description = "앨범상태로 검색하고 최신순으로 조회합니다.")
     @GetMapping("/search/status")
-    public List<AlbumSearchResponse> searchAlbumStatus(@Parameter(description = "검색할 앨범의 공유상태", example = "PRIVATE OR PUBLIC")
-                                                 @RequestParam String albumStatus) {
-        return albumService.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
+    public Slice<AlbumSearchResponse> searchAlbumStatus(@Parameter(description = "검색할 앨범의 공유상태", example = "PRIVATE OR PUBLIC")
+                                                        @RequestParam String albumStatus,
+                                                        @RequestParam(required = false) Long lastAlbumId,
+                                                        @RequestParam(value = "size", defaultValue = "1") int pageSize) {
+        return albumService.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus, pageSize, lastAlbumId);
     }
 
     @Operation(summary = "사용자 앨범 조회", description = "사용자가 참여 중인 모든 앨범을 조회합니다.")
     @GetMapping("/list")
-    public List<AlbumSearchResponse> albumFindAll(){
-        return albumService.findAllAlbumOfMember();
+    public Slice<AlbumSearchResponse> albumFindAll(@RequestParam(required = false) Long lastAlbumId,
+                                                   @RequestParam(value = "size", defaultValue = "1") int pageSize) {
+        return albumService.findAllAlbumOfMember(pageSize, lastAlbumId);
     }
 }
