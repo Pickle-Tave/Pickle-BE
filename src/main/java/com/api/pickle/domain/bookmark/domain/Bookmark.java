@@ -27,4 +27,8 @@ public class Bookmark {
         this.participant = participant;
         this.markStatus = MarkStatus.UNMARKED;
     }
+
+    public void updateMarkStatus(MarkStatus markStatus){
+        this.markStatus = markStatus;
+    }
 }
