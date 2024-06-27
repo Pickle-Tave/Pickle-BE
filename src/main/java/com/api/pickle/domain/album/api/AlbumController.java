@@ -6,6 +6,7 @@ import com.api.pickle.domain.album.dto.request.AlbumCreateRequest;
 import com.api.pickle.domain.album.dto.request.UpdateAlbumRequest;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
+import com.api.pickle.domain.bookmark.application.BookmarkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +29,7 @@ import java.util.List;
 public class AlbumController {
 
     private final AlbumService albumService;
+    private final BookmarkService bookmarkService;
 
     @Operation(summary = "앨범 생성", description = "앨범 생성을 진행합니다.")
     @PostMapping("/create")
@@ -75,5 +77,11 @@ public class AlbumController {
                                                    @RequestParam(value = "size") int pageSize) {
 
         return albumService.findAllAlbumOfMember(pageSize, lastAlbumId);
+    }
+
+    @Operation(summary = "앨범 즐겨찾기 검색", description = "사용자가 즐겨찾기를 적용한 모든 앨범을 조회합니다.")
+    @GetMapping("/search/heart")
+    public List<AlbumSearchResponse> searchAlbumBookmarked(){
+        return bookmarkService.searchAlbumInfoWithBookmarked();
     }
 }

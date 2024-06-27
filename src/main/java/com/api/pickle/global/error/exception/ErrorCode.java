@@ -39,7 +39,8 @@ public enum ErrorCode {
     SHARED_ALBUM_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     MEMBER_ALREADY_JOINED(HttpStatus.BAD_REQUEST, "이미 참여한 앨범입니다."),
 
-    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크 정보가 존재하지 않습니다.")
+    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크 정보가 존재하지 않습니다."),
+    BOOKMARKED_ALBUM_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크가 적용된 앨범이 존재하지 않습니다.")
     ;
 
     private final HttpStatus status;

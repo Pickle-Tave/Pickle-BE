@@ -45,10 +45,6 @@ public class RedisDatabaseSyncService {
         redisService.deleteKeysByPattern(generateBookmarkWildcard());
     }
 
-    private Long extractUserIdFromKey(String key){
-        return Long.parseLong(key.replace(BOOKMARK_USER_ID_KEY, BLANK_STRING));
-    }
-
     private String generateBookmarkWildcard(){
         return BOOKMARK_USER_ID_KEY.concat(WILD_CARD);
     }
