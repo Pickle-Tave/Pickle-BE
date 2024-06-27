@@ -12,6 +12,8 @@ import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,18 +47,18 @@ public class AlbumService {
         return new UpdateAlbumResponse(albumId, newAlbumName);
     }
 
-    public List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword) {
+    public Slice<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword, int pageSize, Long lastAlbumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(currentMember.getId(), keyword);
+        return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(currentMember.getId(), keyword, pageSize, lastAlbumId);
     }
 
-    public List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus) {
+    public Slice<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus, int pageSize, Long lastAlbumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(currentMember.getId(), albumStatus);
+        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(currentMember.getId(), albumStatus, pageSize, lastAlbumId);
     }
 
-    public List<AlbumSearchResponse> findAllAlbumOfMember(){
+    public Slice<AlbumSearchResponse> findAllAlbumOfMember(int pageSize, Long lastAlbumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        return albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId());
+        return albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId(), pageSize, lastAlbumId);
     }
 }
