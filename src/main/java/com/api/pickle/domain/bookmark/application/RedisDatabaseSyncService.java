@@ -3,6 +3,8 @@ package com.api.pickle.domain.bookmark.application;
 import com.api.pickle.domain.bookmark.dao.BookmarkRepository;
 import com.api.pickle.domain.bookmark.domain.Bookmark;
 import com.api.pickle.domain.bookmark.domain.MarkStatus;
+import com.api.pickle.global.error.exception.CustomException;
+import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.infra.config.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +33,10 @@ public class RedisDatabaseSyncService {
 
         for (String stringedUserId : userIds){
             Map<Object, Object> hash = redisService.getHash(stringedUserId);
-            Long userId = extractUserIdFromKey(stringedUserId);
             for (Map.Entry<Object, Object> entry : hash.entrySet()){
-                Long albumId = Long.parseLong(entry.getKey().toString());
-                Bookmark bookmark = bookmarkRepository.findByAlbumIdAndMemberId(albumId, userId);
+                Long bookmarkId = Long.parseLong(entry.getKey().toString());
+                Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
                 bookmark.updateMarkStatus(MarkStatus.valueOf(entry.getValue().toString()));
                 bookmarkRepository.save(bookmark);
             }

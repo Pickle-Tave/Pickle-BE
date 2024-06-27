@@ -44,8 +44,10 @@ public class BookmarkService {
     }
 
     private void markAlbumOfMember(Participant participant, MarkStatus status) {
+        Bookmark bookmark = bookmarkRepository.findByParticipant(participant)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
         redisService.putToBookmarkHash(generateRedisKey(BOOKMARK_USER_ID_KEY, participant.getMember().getId()),
-                participant.getAlbum().getId().toString(),
+                bookmark.getId().toString(),
                 status);
     }
 
