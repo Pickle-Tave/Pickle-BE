@@ -47,8 +47,11 @@ public class AlbumController {
     @GetMapping("/search/keyword")
     public Slice<AlbumSearchResponse> searchAlbumKeyword(@Parameter(description = "검색할 앨범의 이름 키워드", example = "앨범")
                                                          @RequestParam String keyword,
+                                                         @Parameter(description = "이전 페이지의 마지막 앨범 ID (첫 페이지는 비워두세요.)")
                                                          @RequestParam(required = false) Long lastAlbumId,
-                                                         @RequestParam(value = "size", defaultValue = "1") int pageSize) {
+                                                         @Parameter(description = "페이지당 앨범 수", example = "1")
+                                                         @RequestParam(value = "size") int pageSize) {
+
         return albumService.searchKeywordInAlbumOrderByCreatedDateDesc(keyword, pageSize, lastAlbumId);
     }
 
@@ -56,15 +59,21 @@ public class AlbumController {
     @GetMapping("/search/status")
     public Slice<AlbumSearchResponse> searchAlbumStatus(@Parameter(description = "검색할 앨범의 공유상태", example = "PRIVATE OR PUBLIC")
                                                         @RequestParam String albumStatus,
+                                                        @Parameter(description = "이전 페이지의 마지막 앨범 ID (첫 페이지는 비워두세요.)")
                                                         @RequestParam(required = false) Long lastAlbumId,
-                                                        @RequestParam(value = "size", defaultValue = "1") int pageSize) {
+                                                        @Parameter(description = "페이지당 앨범 수", example = "1")
+                                                        @RequestParam(value = "size") int pageSize) {
+
         return albumService.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus, pageSize, lastAlbumId);
     }
 
     @Operation(summary = "사용자 앨범 조회", description = "사용자가 참여 중인 모든 앨범을 조회합니다.")
     @GetMapping("/list")
-    public Slice<AlbumSearchResponse> albumFindAll(@RequestParam(required = false) Long lastAlbumId,
-                                                   @RequestParam(value = "size", defaultValue = "1") int pageSize) {
+    public Slice<AlbumSearchResponse> albumFindAll(@Parameter(description = "이전 페이지의 마지막 앨범 ID (첫 페이지는 비워두세요.)")
+                                                   @RequestParam(required = false) Long lastAlbumId,
+                                                   @Parameter(description = "페이지당 앨범 수", example = "1")
+                                                   @RequestParam(value = "size") int pageSize) {
+
         return albumService.findAllAlbumOfMember(pageSize, lastAlbumId);
     }
 }
