@@ -11,16 +11,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "앨범 API", description = "앨범 관련 API입니다.")
 @RestController
@@ -81,7 +75,10 @@ public class AlbumController {
 
     @Operation(summary = "앨범 즐겨찾기 검색", description = "사용자가 즐겨찾기를 적용한 모든 앨범을 조회합니다.")
     @GetMapping("/search/heart")
-    public List<AlbumSearchResponse> searchAlbumBookmarked(){
-        return bookmarkService.searchAlbumInfoWithBookmarked();
+    public Slice<AlbumSearchResponse> searchAlbumBookmarked(@Parameter(description = "이전 페이지의 마지막 앨범 ID (첫 페이지는 비워두세요.)")
+                                                               @RequestParam(required = false) Long lastAlbumId,
+                                                           @Parameter(description = "페이지당 앨범 수", example = "1")
+                                                               @RequestParam(value = "size") int pageSize){
+        return bookmarkService.searchAlbumInfoWithBookmarked(pageSize, lastAlbumId);
     }
 }

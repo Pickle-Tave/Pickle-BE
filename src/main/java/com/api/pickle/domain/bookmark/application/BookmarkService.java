@@ -16,6 +16,7 @@ import com.api.pickle.global.util.MemberUtil;
 import com.api.pickle.infra.config.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,15 +47,11 @@ public class BookmarkService {
     public MarkedResponse changeMarkByAlbumId(Long albumId, MarkStatus status) {
         Participant participant = findParticipantByAlbumId(albumId);
         markAlbumOfMember(participant, status);
-        return new MarkedResponse(participant.getAlbum().getId(), MarkStatus.MARKED);
+        return new MarkedResponse(participant.getAlbum().getId(), status);
     }
 
-    public List<AlbumSearchResponse> searchAlbumInfoWithBookmarked(){
-        List<AlbumSearchResponse> response =  bookmarkRepository.findAlbumByBookmarks(findAlbumsMarked());
-        if (response.isEmpty()){
-            throw new CustomException(ErrorCode.BOOKMARKED_ALBUM_NOT_FOUND);
-        }
-        return response;
+    public Slice<AlbumSearchResponse> searchAlbumInfoWithBookmarked(int pageSize, Long lastAlbumId){
+        return bookmarkRepository.findAlbumByBookmarks(findAlbumsMarked(), pageSize, lastAlbumId);
     }
 
     private List<Bookmark> findAlbumsMarked(){

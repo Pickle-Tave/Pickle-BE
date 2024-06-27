@@ -3,8 +3,14 @@ package com.api.pickle.domain.bookmark.dao;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.QAlbumSearchResponse;
 import com.api.pickle.domain.bookmark.domain.Bookmark;
+import com.api.pickle.global.error.exception.CustomException;
+import com.api.pickle.global.error.exception.ErrorCode;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
@@ -26,8 +32,8 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
     }
 
     @Override
-    public List<AlbumSearchResponse> findAlbumByBookmarks(List<Bookmark> bookmarks){
-        return queryFactory
+    public Slice<AlbumSearchResponse> findAlbumByBookmarks(List<Bookmark> bookmarks, int pageSize, Long lastAlbumId){
+        List<AlbumSearchResponse> results =  queryFactory
                 .select(new QAlbumSearchResponse(
                         album.id,
                         album.name,
@@ -36,7 +42,34 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
                 .from(bookmark)
                 .join(bookmark.participant, participant)
                 .join(participant.album, album)
-                .where(bookmark.in(bookmarks))
+                .where(bookmark.in(bookmarks), lastAlbumId(lastAlbumId))
+                .orderBy(album.createdDate.desc())
+                .limit(pageSize + 1)
                 .fetch();
+        if (results.isEmpty()) {
+            throw new CustomException(ErrorCode.BOOKMARKED_ALBUM_NOT_FOUND);
+        }
+
+        return checkLastPage(pageSize, results);
+    }
+
+    private BooleanExpression lastAlbumId(Long albumId) {
+        if (albumId == null) {
+            return null;
+        }
+
+        return album.id.lt(albumId);
+    }
+
+    private Slice<AlbumSearchResponse> checkLastPage(int pageSize, List<AlbumSearchResponse> results) {
+
+        boolean hasNext = false;
+
+        if (results.size() > pageSize) {
+            hasNext = true;
+            results.remove(pageSize);
+        }
+
+        return new SliceImpl<>(results, PageRequest.of(0, pageSize), hasNext);
     }
 }
