@@ -37,7 +37,8 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
                 .select(new QAlbumSearchResponse(
                         album.id,
                         album.name,
-                        album.status.stringValue()
+                        album.status.stringValue(),
+                        bookmark.markStatus.stringValue()
                 ))
                 .from(bookmark)
                 .join(bookmark.participant, participant)

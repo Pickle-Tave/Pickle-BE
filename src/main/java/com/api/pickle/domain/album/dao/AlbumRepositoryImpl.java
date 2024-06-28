@@ -2,20 +2,19 @@ package com.api.pickle.domain.album.dao;
 import com.api.pickle.domain.album.domain.SharingStatus;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.QAlbumSearchResponse;
-import com.api.pickle.domain.participant.domain.QParticipant;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 import static com.api.pickle.domain.album.domain.QAlbum.album;
+import static com.api.pickle.domain.bookmark.domain.QBookmark.bookmark;
+import static com.api.pickle.domain.participant.domain.QParticipant.participant;
 
 @RequiredArgsConstructor
 public class AlbumRepositoryImpl implements AlbumRepositoryCustom {
@@ -60,12 +59,14 @@ public class AlbumRepositoryImpl implements AlbumRepositoryCustom {
                 .select(new QAlbumSearchResponse(
                         album.id,
                         album.name,
-                        album.status.stringValue()))
-                .from(QParticipant.participant)
-                .join(QParticipant.participant.album, album)
+                        album.status.stringValue(),
+                        bookmark.markStatus.stringValue()))
+                .from(participant)
+                .join(participant.album, album)
+                .join(bookmark).on(participant.eq(bookmark.participant))
                 .where(
                         lastAlbumId(lastAlbumId),
-                        QParticipant.participant.member.id.eq(memberId). and(condition))
+                        participant.member.id.eq(memberId). and(condition))
                 .orderBy(album.createdDate.desc())
                 .limit(pageSize + 1)
                 .fetch();
