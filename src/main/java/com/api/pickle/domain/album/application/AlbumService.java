@@ -4,6 +4,7 @@ import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
+import com.api.pickle.domain.bookmark.application.BookmarkService;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.domain.participant.domain.Participant;
@@ -26,6 +27,7 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final ParticipantRepository participantRepository;
     private final SharedAlbumService sharedAlbumService;
+    private final BookmarkService bookmarkService;
     private final MemberUtil memberUtil;
 
     @Transactional
@@ -34,7 +36,10 @@ public class AlbumService {
         Album newAlbum = Album.createPrivateAlbum(albumName);
 
         albumRepository.save(newAlbum);
-        participantRepository.save(Participant.createHostParticipant(newAlbum, currentMember));
+
+        Participant participant = Participant.createHostParticipant(newAlbum, currentMember);
+        participantRepository.save(participant);
+        bookmarkService.createBookmark(participant);
     }
 
     @Transactional

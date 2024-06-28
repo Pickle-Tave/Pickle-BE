@@ -1,11 +1,11 @@
-package com.api.pickle.domain.participant.domain;
+package com.api.pickle.domain.bookmark.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Bookmark {
+public enum MarkStatus {
     MARKED("MARKED"),
     UNMARKED("UNMARKED");
 
