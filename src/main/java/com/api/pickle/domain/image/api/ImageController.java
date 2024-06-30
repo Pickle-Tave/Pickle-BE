@@ -10,23 +10,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "이미지 API", description = "이미지 API입니다.")
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/images")
 public class ImageController {
 
     private final ImageService imageService;
 
     @Operation(summary = "이미지 Presigned URL 생성", description = "이미지 Presigned URL을 생성합니다.")
-    @PostMapping("/images/upload-url")
+    @PostMapping("/upload-url")
     public PresignedUrlResponse imagePresignedUrlCreate(@RequestBody PresignedUrlRequest request) {
         return imageService.createImagePresignedUrl(request);
     }
 
     @Operation(summary = "이미지 분류 결과", description = "이미지 분류 결과를 반환합니다.")
-    @PostMapping("/images/classify")
+    @PostMapping("/classify")
     public ClassifiedImageResponse classifyImages(@RequestBody ImageClassificationRequest request) {
         return imageService.classifyImages(request);
     }
