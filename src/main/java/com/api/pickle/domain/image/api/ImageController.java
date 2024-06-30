@@ -1,7 +1,7 @@
 package com.api.pickle.domain.image.api;
 
 import com.api.pickle.domain.image.application.ImageService;
-import com.api.pickle.domain.image.dto.request.AlbumImageCreateRequest;
+import com.api.pickle.domain.image.dto.request.PresignedUrlRequest;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,9 +17,9 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @Operation(summary = "앨범 이미지 Presigned URL 생성", description = "앨범 이미지 Presigned URL을 생성합니다.")
-    @PostMapping("/album/upload-url")
-    public PresignedUrlResponse albumPresignedUrlCreate(@RequestBody AlbumImageCreateRequest request) {
-        return imageService.createAlbumPresignedUrl(request);
+    @Operation(summary = "이미지 Presigned URL 생성", description = "이미지 Presigned URL을 생성합니다.")
+    @PostMapping("/images/upload-url")
+    public PresignedUrlResponse imagePresignedUrlCreate(@RequestBody PresignedUrlRequest request) {
+        return imageService.createImagePresignedUrl(request);
     }
 }

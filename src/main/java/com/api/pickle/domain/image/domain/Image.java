@@ -29,20 +29,20 @@ public class Image extends BaseTimeEntity {
     @JoinColumn(name = "album_id")
     private Album album;
 
-    private String imageKey;
+    private String imageUrl;
 
     @Builder
-    private Image(Member member, Album album, String imageKey) {
+    private Image(Member member, Album album, String imageUrl) {
         this.member = member;
         this.album = album;
-        this.imageKey = imageKey;
+        this.imageUrl = imageUrl;
     }
 
-    public static Image createImage(Member member, Album album, String imageKey) {
+    public static Image createImage(Member member, Album album, String imageUrl) {
         return Image.builder()
                 .member(member)
                 .album(album)
-                .imageKey(imageKey)
+                .imageUrl(imageUrl)
                 .build();
     }
 }
