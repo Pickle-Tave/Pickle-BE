@@ -13,12 +13,9 @@ import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,16 +51,19 @@ public class AlbumService {
 
     public Slice<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword, int pageSize, Long lastAlbumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(currentMember.getId(), keyword, pageSize, lastAlbumId);
+        Slice<AlbumSearchResponse> response =  albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(currentMember.getId(), keyword, pageSize, lastAlbumId);
+        return bookmarkService.reflectRedisMarkStatus(response, currentMember.getId());
     }
 
     public Slice<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus, int pageSize, Long lastAlbumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(currentMember.getId(), albumStatus, pageSize, lastAlbumId);
+        Slice<AlbumSearchResponse> response =  albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(currentMember.getId(), albumStatus, pageSize, lastAlbumId);
+        return bookmarkService.reflectRedisMarkStatus(response, currentMember.getId());
     }
 
     public Slice<AlbumSearchResponse> findAllAlbumOfMember(int pageSize, Long lastAlbumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        return albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId(), pageSize, lastAlbumId);
+        Slice<AlbumSearchResponse> response =  albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId(), pageSize, lastAlbumId);
+        return bookmarkService.reflectRedisMarkStatus(response, currentMember.getId());
     }
 }

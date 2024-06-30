@@ -56,16 +56,29 @@ public class BookmarkService {
 
         Slice<AlbumSearchResponse> searchResponses = bookmarkRepository.findAlbumByBookmarks(currentMember.getId(), markedLists, pageSize, lastAlbumId);
 
-        searchResponses.getContent().forEach(
-                albumSearchResponse -> {
-                    if (markedSet.contains(albumSearchResponse.getAlbumId())){
-                        albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.MARKED.getValue());
-                    } else if (unmarkedSet.contains(albumSearchResponse.getAlbumId())){
-                        albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.UNMARKED.getValue());
-                    }
-                });
+        updateMarkedStatus(searchResponses, markedSet, unmarkedSet);
 
         return searchResponses;
+    }
+
+    public Slice<AlbumSearchResponse> reflectRedisMarkStatus (Slice<AlbumSearchResponse> response, Long userId){
+        RedisBookmarkStatusDto markedLists = getRedisBookmarkDataOfUser(userId);
+        Set<Long> markedSet = new HashSet<>(markedLists.getMarkedList());
+        Set<Long> unmarkedSet = new HashSet<>(markedLists.getUnmarkedList());
+
+        updateMarkedStatus(response, markedSet, unmarkedSet);
+
+        return response;
+    }
+
+    public void updateMarkedStatus(Slice<AlbumSearchResponse> searchResponses, Set<Long> markedSet, Set<Long> unmarkedSet) {
+        searchResponses.getContent().forEach(albumSearchResponse -> {
+            if (markedSet.contains(albumSearchResponse.getAlbumId())) {
+                albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.MARKED.getValue());
+            } else if (unmarkedSet.contains(albumSearchResponse.getAlbumId())) {
+                albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.UNMARKED.getValue());
+            }
+        });
     }
 
     private RedisBookmarkStatusDto getRedisBookmarkDataOfUser(Long userId) {
