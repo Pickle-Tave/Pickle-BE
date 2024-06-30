@@ -87,16 +87,16 @@ public class BookmarkService {
         List<Long> markedIds = new ArrayList<>();
         List<Long> unmarkedIds = new ArrayList<>();
 
-        for (Map.Entry<Object, Object> entry : redisData.entrySet()){
-            Long bookmarkId = Long.parseLong(entry.getKey().toString());
-            MarkStatus markStatus = MarkStatus.valueOf(entry.getValue().toString());
+        redisData.forEach((key, value) -> {
+            Long bookmarkId = Long.parseLong(key.toString());
+            MarkStatus markStatus = MarkStatus.valueOf(value.toString());
 
             if (markStatus == MarkStatus.MARKED){
                 markedIds.add(bookmarkId);
             } else if (markStatus == MarkStatus.UNMARKED){
                 unmarkedIds.add(bookmarkId);
             }
-        }
+        });
 
         return new RedisBookmarkStatusDto(markedIds, unmarkedIds);
     }
