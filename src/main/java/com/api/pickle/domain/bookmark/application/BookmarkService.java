@@ -6,6 +6,7 @@ import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.bookmark.dao.BookmarkRepository;
 import com.api.pickle.domain.bookmark.domain.Bookmark;
 import com.api.pickle.domain.bookmark.domain.MarkStatus;
+import com.api.pickle.domain.bookmark.dto.RedisBookmarkStatusDto;
 import com.api.pickle.domain.bookmark.dto.response.MarkedResponse;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
@@ -20,10 +21,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static com.api.pickle.global.common.constants.RedisConstants.*;
 
@@ -51,38 +49,66 @@ public class BookmarkService {
     }
 
     public Slice<AlbumSearchResponse> searchAlbumInfoWithBookmarked(int pageSize, Long lastAlbumId){
-        return bookmarkRepository.findAlbumByBookmarks(findAlbumsMarked(), pageSize, lastAlbumId);
-    }
-
-    private List<Bookmark> findAlbumsMarked(){
         final Member currentMember = memberUtil.getCurrentMember();
-        Map<Long, Bookmark> bookmarks = bookmarkRepository.findAllByMemberId(currentMember.getId())
-                        .stream()
-                        .collect(Collectors.toMap(Bookmark::getId, Function.identity()));
-        Map<Object, Object> redisData = redisService.getHash(concatKeyAndUserId(currentMember.getId()));
+        RedisBookmarkStatusDto markedLists = getRedisBookmarkDataOfUser(currentMember.getId());
+        Set<Long> markedSet = new HashSet<>(markedLists.getMarkedList());
+        Set<Long> unmarkedSet = new HashSet<>(markedLists.getUnmarkedList());
 
-        for (Map.Entry<Object, Object> entry : redisData.entrySet()){
-            Long bookmarkId = Long.parseLong(entry.getKey().toString());
-            MarkStatus markStatus = MarkStatus.valueOf(entry.getValue().toString());
-            Bookmark bookmark = bookmarks.get(bookmarkId);
-            if (bookmark != null){
-                bookmark.updateMarkStatus(markStatus);
-            }
-        }
+        Slice<AlbumSearchResponse> searchResponses = bookmarkRepository.findAlbumByBookmarks(currentMember.getId(), markedLists, pageSize, lastAlbumId);
 
-        return bookmarks.values().stream()
-                .filter(bookmark -> bookmark.getMarkStatus() == MarkStatus.MARKED)
-                .collect(Collectors.toList());
+        updateMarkedStatus(searchResponses, markedSet, unmarkedSet);
+
+        return searchResponses;
     }
 
-    private String concatKeyAndUserId(Long userId){
-        return BOOKMARK_USER_ID_KEY.concat(userId.toString());
+    public Slice<AlbumSearchResponse> reflectRedisMarkStatus (Slice<AlbumSearchResponse> response, Long memberId){
+        RedisBookmarkStatusDto markedLists = getRedisBookmarkDataOfUser(memberId);
+        Set<Long> markedSet = new HashSet<>(markedLists.getMarkedList());
+        Set<Long> unmarkedSet = new HashSet<>(markedLists.getUnmarkedList());
+
+        updateMarkedStatus(response, markedSet, unmarkedSet);
+
+        return response;
+    }
+
+    public void updateMarkedStatus(Slice<AlbumSearchResponse> searchResponses, Set<Long> markedSet, Set<Long> unmarkedSet) {
+        searchResponses.getContent().forEach(albumSearchResponse -> {
+            if (markedSet.contains(albumSearchResponse.getAlbumId())) {
+                albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.MARKED.getValue());
+            } else if (unmarkedSet.contains(albumSearchResponse.getAlbumId())) {
+                albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.UNMARKED.getValue());
+            }
+        });
+    }
+
+    private RedisBookmarkStatusDto getRedisBookmarkDataOfUser(Long memberId) {
+        Map<Object, Object> redisData = redisService.getHash(concatKeyAndMemberId(memberId));
+
+        List<Long> markedIds = new ArrayList<>();
+        List<Long> unmarkedIds = new ArrayList<>();
+
+        redisData.forEach((key, value) -> {
+            Long bookmarkId = Long.parseLong(key.toString());
+            MarkStatus markStatus = MarkStatus.valueOf(value.toString());
+
+            if (markStatus == MarkStatus.MARKED){
+                markedIds.add(bookmarkId);
+            } else if (markStatus == MarkStatus.UNMARKED){
+                unmarkedIds.add(bookmarkId);
+            }
+        });
+
+        return new RedisBookmarkStatusDto(markedIds, unmarkedIds);
+    }
+
+    private String concatKeyAndMemberId(Long memberId){
+        return BOOKMARK_MEMBER_ID_KEY.concat(memberId.toString());
     }
 
     private void markAlbumOfMember(Participant participant, MarkStatus status) {
         Bookmark bookmark = bookmarkRepository.findByParticipant(participant)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
-        redisService.putToBookmarkHash(generateRedisKey(BOOKMARK_USER_ID_KEY, participant.getMember().getId()),
+        redisService.putToBookmarkHash(generateRedisKey(BOOKMARK_MEMBER_ID_KEY, participant.getMember().getId()),
                 bookmark.getId().toString(),
                 status);
     }

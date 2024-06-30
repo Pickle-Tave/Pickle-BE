@@ -2,7 +2,8 @@ package com.api.pickle.domain.bookmark.dao;
 
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.QAlbumSearchResponse;
-import com.api.pickle.domain.bookmark.domain.Bookmark;
+import com.api.pickle.domain.bookmark.domain.MarkStatus;
+import com.api.pickle.domain.bookmark.dto.RedisBookmarkStatusDto;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -23,16 +24,11 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Bookmark> findAllByMemberId(Long memberId){
-        return queryFactory
-                .selectFrom(bookmark)
-                .join(bookmark.participant, participant)
-                .where(participant.member.id.eq(memberId))
-                .fetch();
-    }
+    public Slice<AlbumSearchResponse> findAlbumByBookmarks(Long memberId, RedisBookmarkStatusDto markLists, int pageSize, Long lastAlbumId){
+        BooleanExpression markedCondition = bookmark.markStatus.eq(MarkStatus.MARKED);
+        BooleanExpression inMarkedListCondition = bookmark.id.in(markLists.getMarkedList());
+        BooleanExpression notInMarkedListCondition = bookmark.id.notIn(markLists.getUnmarkedList());
 
-    @Override
-    public Slice<AlbumSearchResponse> findAlbumByBookmarks(List<Bookmark> bookmarks, int pageSize, Long lastAlbumId){
         List<AlbumSearchResponse> results =  queryFactory
                 .select(new QAlbumSearchResponse(
                         album.id,
@@ -43,10 +39,14 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
                 .from(bookmark)
                 .join(bookmark.participant, participant)
                 .join(participant.album, album)
-                .where(bookmark.in(bookmarks), lastAlbumId(lastAlbumId))
+                .where(participant.member.id.eq(memberId),
+                        markedCondition.or(inMarkedListCondition),
+                        notInMarkedListCondition,
+                        lastAlbumId(lastAlbumId))
                 .orderBy(album.createdDate.desc())
                 .limit(pageSize + 1)
                 .fetch();
+
         if (results.isEmpty()) {
             throw new CustomException(ErrorCode.BOOKMARKED_ALBUM_NOT_FOUND);
         }
