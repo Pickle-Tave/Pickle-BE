@@ -86,6 +86,14 @@
                 {
                     "name": "AWS_SECRET_KEY",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_SECRET_KEY::"
+                },
+                {
+                    "name": "FAST_API_SERVER_URL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:FAST_API_SERVER_URL::"
+                },
+                {
+                    "name": "FAST_API_SERVER_ENDPOINT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:FAST_API_SERVER_ENDPOINT::"
                 }
             ],
             "ulimits": [],
