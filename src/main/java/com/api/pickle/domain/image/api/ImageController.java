@@ -1,7 +1,9 @@
 package com.api.pickle.domain.image.api;
 
 import com.api.pickle.domain.image.application.ImageService;
+import com.api.pickle.domain.image.dto.request.ImageClassificationRequest;
 import com.api.pickle.domain.image.dto.request.PresignedUrlRequest;
+import com.api.pickle.domain.image.dto.response.ClassifiedImageResponse;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,5 +23,11 @@ public class ImageController {
     @PostMapping("/images/upload-url")
     public PresignedUrlResponse imagePresignedUrlCreate(@RequestBody PresignedUrlRequest request) {
         return imageService.createImagePresignedUrl(request);
+    }
+
+    @Operation(summary = "이미지 분류 결과", description = "이미지 분류 결과를 반환합니다.")
+    @PostMapping("/images/classify")
+    public ClassifiedImageResponse classifyImages(@RequestBody ImageClassificationRequest request) {
+        return imageService.classifyImages(request);
     }
 }

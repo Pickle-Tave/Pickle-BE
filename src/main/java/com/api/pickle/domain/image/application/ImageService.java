@@ -7,10 +7,13 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.image.dao.ImageRepository;
+import com.api.pickle.domain.image.dto.request.ImageClassificationRequest;
 import com.api.pickle.domain.image.dto.request.PresignedUrlRequest;
+import com.api.pickle.domain.image.dto.response.ClassifiedImageResponse;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.global.util.MemberUtil;
+import com.api.pickle.infra.config.feign.ImageClassificationClient;
 import com.api.pickle.infra.config.s3.S3Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,7 @@ public class ImageService {
     private final AmazonS3 amazonS3;
     private final ImageRepository imageRepository;
     private final AlbumRepository albumRepository;
+    private final ImageClassificationClient imageClassificationClient;
 
     public PresignedUrlResponse createImagePresignedUrl(PresignedUrlRequest request) {
         final Member member = memberUtil.getCurrentMember();
@@ -91,5 +95,9 @@ public class ImageService {
         expiration.setTime(expTime);
 
         return expiration;
+    }
+
+    public ClassifiedImageResponse classifyImages(ImageClassificationRequest request) {
+        return imageClassificationClient.getClassifiedImages(request);
     }
 }
