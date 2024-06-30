@@ -7,5 +7,5 @@ import org.springframework.data.domain.Slice;
 
 public interface BookmarkRepositoryCustom {
 
-    Slice<AlbumSearchResponse> findAlbumByBookmarks(Long userId, RedisBookmarkStatusDto markLists, int pageSize, Long lastAlbumId);
+    Slice<AlbumSearchResponse> findAlbumByBookmarks(Long memberId, RedisBookmarkStatusDto markLists, int pageSize, Long lastAlbumId);
 }
