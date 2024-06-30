@@ -24,7 +24,7 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<AlbumSearchResponse> findAlbumByBookmarks(Long userId, RedisBookmarkStatusDto markLists, int pageSize, Long lastAlbumId){
+    public Slice<AlbumSearchResponse> findAlbumByBookmarks(Long memberId, RedisBookmarkStatusDto markLists, int pageSize, Long lastAlbumId){
         BooleanExpression markedCondition = bookmark.markStatus.eq(MarkStatus.MARKED);
         BooleanExpression inMarkedListCondition = bookmark.id.in(markLists.getMarkedList());
         BooleanExpression notInMarkedListCondition = bookmark.id.notIn(markLists.getUnmarkedList());
@@ -39,7 +39,7 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
                 .from(bookmark)
                 .join(bookmark.participant, participant)
                 .join(participant.album, album)
-                .where(participant.member.id.eq(userId),
+                .where(participant.member.id.eq(memberId),
                         markedCondition.or(inMarkedListCondition),
                         notInMarkedListCondition,
                         lastAlbumId(lastAlbumId))

@@ -61,8 +61,8 @@ public class BookmarkService {
         return searchResponses;
     }
 
-    public Slice<AlbumSearchResponse> reflectRedisMarkStatus (Slice<AlbumSearchResponse> response, Long userId){
-        RedisBookmarkStatusDto markedLists = getRedisBookmarkDataOfUser(userId);
+    public Slice<AlbumSearchResponse> reflectRedisMarkStatus (Slice<AlbumSearchResponse> response, Long memberId){
+        RedisBookmarkStatusDto markedLists = getRedisBookmarkDataOfUser(memberId);
         Set<Long> markedSet = new HashSet<>(markedLists.getMarkedList());
         Set<Long> unmarkedSet = new HashSet<>(markedLists.getUnmarkedList());
 
@@ -81,8 +81,8 @@ public class BookmarkService {
         });
     }
 
-    private RedisBookmarkStatusDto getRedisBookmarkDataOfUser(Long userId) {
-        Map<Object, Object> redisData = redisService.getHash(concatKeyAndUserId(userId));
+    private RedisBookmarkStatusDto getRedisBookmarkDataOfUser(Long memberId) {
+        Map<Object, Object> redisData = redisService.getHash(concatKeyAndMemberId(memberId));
 
         List<Long> markedIds = new ArrayList<>();
         List<Long> unmarkedIds = new ArrayList<>();
@@ -101,14 +101,14 @@ public class BookmarkService {
         return new RedisBookmarkStatusDto(markedIds, unmarkedIds);
     }
 
-    private String concatKeyAndUserId(Long userId){
-        return BOOKMARK_USER_ID_KEY.concat(userId.toString());
+    private String concatKeyAndMemberId(Long memberId){
+        return BOOKMARK_MEMBER_ID_KEY.concat(memberId.toString());
     }
 
     private void markAlbumOfMember(Participant participant, MarkStatus status) {
         Bookmark bookmark = bookmarkRepository.findByParticipant(participant)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
-        redisService.putToBookmarkHash(generateRedisKey(BOOKMARK_USER_ID_KEY, participant.getMember().getId()),
+        redisService.putToBookmarkHash(generateRedisKey(BOOKMARK_MEMBER_ID_KEY, participant.getMember().getId()),
                 bookmark.getId().toString(),
                 status);
     }

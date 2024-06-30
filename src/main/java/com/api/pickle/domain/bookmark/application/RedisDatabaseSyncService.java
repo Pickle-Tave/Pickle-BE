@@ -29,10 +29,10 @@ public class RedisDatabaseSyncService {
     @Scheduled(fixedRate = DATABASE_SYNC_CYCLE)
     @Transactional
     public void syncRedsToDatabase(){
-        Set<String> userIds = redisService.getKeysByPattern(generateBookmarkWildcard());
+        Set<String> memberIds = redisService.getKeysByPattern(generateBookmarkWildcard());
 
-        for (String stringedUserId : userIds){
-            Map<Object, Object> hash = redisService.getHash(stringedUserId);
+        for (String stringedMemberId : memberIds){
+            Map<Object, Object> hash = redisService.getHash(stringedMemberId);
             for (Map.Entry<Object, Object> entry : hash.entrySet()){
                 Long bookmarkId = Long.parseLong(entry.getKey().toString());
                 Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
@@ -46,6 +46,6 @@ public class RedisDatabaseSyncService {
     }
 
     private String generateBookmarkWildcard(){
-        return BOOKMARK_USER_ID_KEY.concat(WILD_CARD);
+        return BOOKMARK_MEMBER_ID_KEY.concat(WILD_CARD);
     }
 }
