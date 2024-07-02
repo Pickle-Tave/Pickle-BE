@@ -44,4 +44,8 @@ public class Image extends BaseTimeEntity {
                 .imageUrl(imageUrl)
                 .build();
     }
+
+    public void updateAlbum(Album album) {
+        this.album = album;
+    }
 }

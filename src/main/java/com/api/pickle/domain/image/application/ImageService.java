@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.api.pickle.domain.album.dao.AlbumRepository;
+import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.image.domain.Image;
 import com.api.pickle.domain.image.dto.request.ImageClassificationRequest;
@@ -157,5 +158,16 @@ public class ImageService {
     private void validateTagOwner(Member member, Tag tag) {
         memberTagRepository.findByMemberAndTag(member, tag)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_TAG_OWNER));
+    }
+
+    public void updateImageAlbum(Long albumId, List<Long> imageIds) {
+        List<Image> images = imageRepository.findAllById(imageIds);
+
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
+
+        images.stream()
+                .filter(image -> image.getAlbum() == null)
+                .forEach(image -> image.updateAlbum(album));
     }
 }
