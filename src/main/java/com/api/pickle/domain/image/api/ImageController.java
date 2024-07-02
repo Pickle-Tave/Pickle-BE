@@ -2,8 +2,10 @@ package com.api.pickle.domain.image.api;
 
 import com.api.pickle.domain.image.application.ImageService;
 import com.api.pickle.domain.image.dto.request.ImageClassificationRequest;
+import com.api.pickle.domain.image.dto.request.ImageTagAssignRequest;
 import com.api.pickle.domain.image.dto.request.PresignedUrlRequest;
 import com.api.pickle.domain.image.dto.response.ClassifiedImageResponse;
+import com.api.pickle.domain.image.dto.response.ImageResponse;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,5 +33,11 @@ public class ImageController {
     @PostMapping("/classify")
     public ClassifiedImageResponse classifyImages(@RequestBody ImageClassificationRequest request) {
         return imageService.classifyImages(request);
+    }
+
+    @Operation(summary = "이미지 해시태그 설정", description = "이미지에 해시태그를 설정합니다.")
+    @PostMapping("/assign/tag")
+    public ImageResponse assignImageTags(@RequestBody ImageTagAssignRequest request) {
+        return imageService.assignImageTags(request);
     }
 }

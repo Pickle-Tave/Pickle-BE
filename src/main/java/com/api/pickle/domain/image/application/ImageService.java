@@ -7,11 +7,21 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.image.dao.ImageRepository;
+import com.api.pickle.domain.image.domain.Image;
 import com.api.pickle.domain.image.dto.request.ImageClassificationRequest;
+import com.api.pickle.domain.image.dto.request.ImageTagAssignRequest;
 import com.api.pickle.domain.image.dto.request.PresignedUrlRequest;
 import com.api.pickle.domain.image.dto.response.ClassifiedImageResponse;
+import com.api.pickle.domain.image.dto.response.ImageResponse;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
+import com.api.pickle.domain.imagetag.dao.ImageTagRepository;
+import com.api.pickle.domain.imagetag.domain.ImageTag;
 import com.api.pickle.domain.member.domain.Member;
+import com.api.pickle.domain.membertag.dao.MemberTagRepository;
+import com.api.pickle.domain.tag.dao.TagRepository;
+import com.api.pickle.domain.tag.domain.Tag;
+import com.api.pickle.global.error.exception.CustomException;
+import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
 import com.api.pickle.infra.config.feign.ImageClassificationClient;
 import com.api.pickle.infra.config.s3.S3Properties;
@@ -25,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static com.api.pickle.domain.image.domain.Image.createImage;
+import static com.api.pickle.domain.imagetag.domain.ImageTag.createImageTag;
 
 @Service
 @Slf4j
@@ -38,6 +49,9 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final AlbumRepository albumRepository;
     private final ImageClassificationClient imageClassificationClient;
+    private final TagRepository tagRepository;
+    private final MemberTagRepository memberTagRepository;
+    private final ImageTagRepository imageTagRepository;
 
     public PresignedUrlResponse createImagePresignedUrl(PresignedUrlRequest request) {
         final Member member = memberUtil.getCurrentMember();
@@ -107,5 +121,41 @@ public class ImageService {
                 .forEach(imageRepository::save);
 
         return response;
+    }
+
+    public ImageResponse assignImageTags(ImageTagAssignRequest request) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
+        List<Tag> tags = request.getHashtags().stream()
+                .map(tagName -> tagRepository.findByName(tagName)
+                        .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND)))
+                .toList();
+
+        tags.forEach(tag -> validateTagOwner(currentMember, tag));
+
+        List<Image> imageUrls = request.getImageUrls().stream()
+                .map(imageUrl -> imageRepository.findByImageUrl(imageUrl)
+                        .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)))
+                .toList();
+
+        List<ImageTag> imageTags = imageUrls.stream()
+                .flatMap(image -> tags.stream()
+                        .map(tag -> createImageTag(tag, image)))
+                .toList();
+
+        imageTagRepository.saveAll(imageTags);
+
+        List<Long> imageIds = imageUrls.stream()
+                .map(Image::getId)
+                .toList();
+
+        return ImageResponse.builder()
+                .imageIds(imageIds)
+                .build();
+    }
+
+    private void validateTagOwner(Member member, Tag tag) {
+        memberTagRepository.findByMemberAndTag(member, tag)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_TAG_OWNER));
     }
 }
