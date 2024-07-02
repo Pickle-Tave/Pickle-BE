@@ -19,6 +19,7 @@ import com.api.pickle.domain.imagetag.dao.ImageTagRepository;
 import com.api.pickle.domain.imagetag.domain.ImageTag;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.membertag.dao.MemberTagRepository;
+import com.api.pickle.domain.membertag.domain.MemberTag;
 import com.api.pickle.domain.tag.dao.TagRepository;
 import com.api.pickle.domain.tag.domain.Tag;
 import com.api.pickle.global.error.exception.CustomException;
@@ -127,12 +128,15 @@ public class ImageService {
     public ImageResponse assignImageTags(ImageTagAssignRequest request) {
         final Member currentMember = memberUtil.getCurrentMember();
 
-        List<Tag> tags = request.getHashtags().stream()
-                .map(tagName -> tagRepository.findByName(tagName)
-                        .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND)))
-                .toList();
+        List<MemberTag> memberTags = memberTagRepository.findByMemberAndTagIds(currentMember, request.getHashtagIds());
 
-        tags.forEach(tag -> validateTagOwner(currentMember, tag));
+        if (memberTags.isEmpty()) {
+            throw new CustomException(ErrorCode.TAG_NOT_FOUND);
+        }
+
+        List<Tag> tags = memberTags.stream()
+                .map(MemberTag::getTag)
+                .toList();
 
         List<Image> imageUrls = request.getImageUrls().stream()
                 .map(imageUrl -> imageRepository.findByImageUrl(imageUrl)
@@ -153,11 +157,6 @@ public class ImageService {
         return ImageResponse.builder()
                 .imageIds(imageIds)
                 .build();
-    }
-
-    private void validateTagOwner(Member member, Tag tag) {
-        memberTagRepository.findByMemberAndTag(member, tag)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_TAG_OWNER));
     }
 
     public void updateImageAlbum(Long albumId, List<Long> imageIds) {
