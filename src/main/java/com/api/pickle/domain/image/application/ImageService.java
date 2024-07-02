@@ -158,7 +158,12 @@ public class ImageService {
                 .build();
     }
 
-    public void updateImageAlbum(Long albumId, List<Long> imageIds) {
+    public void updateAllImageAlbum(UpdateAllAlbumIdRequest updateAllAlbumIdRequest) {
+        updateAllAlbumIdRequest.getUpdateAlbumIdRequestList()
+                .forEach(request -> updateImageAlbum(request.getAlbumId(), request.getImageIds()));
+    }
+
+    private void updateImageAlbum(Long albumId, List<Long> imageIds) {
         List<Image> images = imageRepository.findAllById(imageIds);
 
         Album album = albumRepository.findById(albumId)
@@ -167,11 +172,5 @@ public class ImageService {
         images.stream()
                 .filter(image -> image.getAlbum() == null)
                 .forEach(image -> image.updateAlbum(album));
-    }
-
-    public void updateAllImageAlbum(UpdateAllAlbumIdRequest updateAllAlbumIdRequest) {
-        for (UpdateAlbumIdRequest request : updateAllAlbumIdRequest.getUpdateAlbumIdRequestList()) {
-            updateImageAlbum(request.getAlbumId(), request.getImageIds());
-        }
     }
 }
