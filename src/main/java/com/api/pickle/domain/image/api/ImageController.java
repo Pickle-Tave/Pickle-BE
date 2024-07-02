@@ -1,10 +1,7 @@
 package com.api.pickle.domain.image.api;
 
 import com.api.pickle.domain.image.application.ImageService;
-import com.api.pickle.domain.image.dto.request.ImageClassificationRequest;
-import com.api.pickle.domain.image.dto.request.ImageTagAssignRequest;
-import com.api.pickle.domain.image.dto.request.PresignedUrlRequest;
-import com.api.pickle.domain.image.dto.request.UpdateAlbumIdRequest;
+import com.api.pickle.domain.image.dto.request.*;
 import com.api.pickle.domain.image.dto.response.ClassifiedImageResponse;
 import com.api.pickle.domain.image.dto.response.ImageResponse;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
@@ -46,8 +43,8 @@ public class ImageController {
 
     @Operation(summary = "앨범 이미지 저장", description = "앨범에 이미지를 저장합니다.")
     @PostMapping("/save/album")
-    public ResponseEntity<Void> updateImageAlbum(@RequestBody UpdateAlbumIdRequest request) {
-        imageService.updateImageAlbum(request.getAlbumId(), request.getImageIds());
+    public ResponseEntity<Void> updateImageAlbum(@RequestBody UpdateAllAlbumIdRequest request) {
+        imageService.updateAllImageAlbum(request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

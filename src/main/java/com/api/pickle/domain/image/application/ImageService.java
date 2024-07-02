@@ -7,11 +7,10 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
+import com.api.pickle.domain.album.dto.request.UpdateAlbumRequest;
 import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.image.domain.Image;
-import com.api.pickle.domain.image.dto.request.ImageClassificationRequest;
-import com.api.pickle.domain.image.dto.request.ImageTagAssignRequest;
-import com.api.pickle.domain.image.dto.request.PresignedUrlRequest;
+import com.api.pickle.domain.image.dto.request.*;
 import com.api.pickle.domain.image.dto.response.ClassifiedImageResponse;
 import com.api.pickle.domain.image.dto.response.ImageResponse;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
@@ -168,5 +167,11 @@ public class ImageService {
         images.stream()
                 .filter(image -> image.getAlbum() == null)
                 .forEach(image -> image.updateAlbum(album));
+    }
+
+    public void updateAllImageAlbum(UpdateAllAlbumIdRequest updateAllAlbumIdRequest) {
+        for (UpdateAlbumIdRequest request : updateAllAlbumIdRequest.getUpdateAlbumIdRequestList()) {
+            updateImageAlbum(request.getAlbumId(), request.getImageIds());
+        }
     }
 }

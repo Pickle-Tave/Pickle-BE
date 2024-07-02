@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UpdateAlbumIdRequest {
-    private Long albumId;
-    private List<Long> imageIds;
+public class UpdateAllAlbumIdRequest {
+    private List<UpdateAlbumIdRequest> updateAlbumIdRequestList;
 }
