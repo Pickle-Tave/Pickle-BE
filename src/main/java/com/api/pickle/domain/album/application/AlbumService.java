@@ -4,10 +4,13 @@ import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
+import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
+import com.api.pickle.domain.participant.domain.HostStatus;
 import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.domain.sharedalbum.application.SharedAlbumService;
+import com.api.pickle.domain.sharedalbum.dao.SharedAlbumRepository;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
@@ -25,6 +28,8 @@ public class AlbumService {
     private final ParticipantRepository participantRepository;
     private final SharedAlbumService sharedAlbumService;
     private final MemberUtil memberUtil;
+    private final ImageRepository imageRepository;
+    private final SharedAlbumRepository sharedAlbumRepository;
 
     @Transactional
     public void createAlbum(String albumName){
@@ -56,5 +61,27 @@ public class AlbumService {
     public List<AlbumSearchResponse> findAllAlbumOfMember(){
         final Member currentMember = memberUtil.getCurrentMember();
         return albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId());
+    }
+
+    @Transactional
+    public void deleteAlbum(Long albumId) {
+        final Member currentMember = memberUtil.getCurrentMember();
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(()->new CustomException(ErrorCode.ALBUM_NOT_FOUND));
+        Participant findMember = participantRepository.findByMemberAndAlbum(currentMember,album)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if (findMember.getHostStatus().equals(HostStatus.HOST)) {
+            deleteImageParticipantSharedAlbum(albumId);
+            albumRepository.delete(album);
+        } else {
+            throw new CustomException(ErrorCode.MEMBER_NOT_HOST);
+        }
+    }
+
+    private void deleteImageParticipantSharedAlbum(Long albumId) {
+        imageRepository.deleteAllByAlbumId(albumId);
+        participantRepository.deleteAllByAlbumId(albumId);
+        sharedAlbumRepository.deleteByAlbumId(albumId);
     }
 }

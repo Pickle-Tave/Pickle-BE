@@ -35,7 +35,8 @@ public enum ErrorCode {
 
     SHARED_ALBUM_NOT_FOUND(HttpStatus.BAD_REQUEST, "공유 앨범을 찾을 수 없습니다."),
     SHARED_ALBUM_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
-    MEMBER_ALREADY_JOINED(HttpStatus.BAD_REQUEST, "이미 참여한 앨범입니다.")
+    MEMBER_ALREADY_JOINED(HttpStatus.BAD_REQUEST, "이미 참여한 앨범입니다."),
+    MEMBER_NOT_HOST(HttpStatus.BAD_REQUEST,"앨범 호스트가 아닙니다.")
     ;
 
     private final HttpStatus status;

@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     Optional<Participant> findByMemberAndAlbum(Member member, Album album);
+    void deleteAllByAlbumId(Long albumId);
 }

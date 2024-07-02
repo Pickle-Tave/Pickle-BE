@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface SharedAlbumRepository extends JpaRepository<SharedAlbum, Long> {
     Optional<SharedAlbum> findByLink(String Link);
+    void deleteByAlbumId(Long albumId);
 }

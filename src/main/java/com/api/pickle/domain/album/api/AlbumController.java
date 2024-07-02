@@ -57,4 +57,11 @@ public class AlbumController {
     public List<AlbumSearchResponse> albumFindAll(){
         return albumService.findAllAlbumOfMember();
     }
+    @Operation(summary = "앨범 삭제", description = "앨범을 삭제합니다.")
+    @DeleteMapping("/delete/{albumId}")
+    public ResponseEntity<Void> updateAlbumName(@PathVariable Long albumId) {
+        albumService.deleteAlbum(albumId);
+        return ResponseEntity.ok().build();
+    }
+
 }
