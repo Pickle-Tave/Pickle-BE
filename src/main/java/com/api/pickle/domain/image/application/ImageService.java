@@ -20,12 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
+
+import static com.api.pickle.domain.image.domain.Image.createImage;
 
 @Service
 @Slf4j
@@ -98,6 +97,15 @@ public class ImageService {
     }
 
     public ClassifiedImageResponse classifyImages(ImageClassificationRequest request) {
-        return imageClassificationClient.getClassifiedImages(request);
+        final Member currentMember = memberUtil.getCurrentMember();
+
+        ClassifiedImageResponse response = imageClassificationClient.getClassifiedImages(request);
+
+        response.getGroupedImages().stream()
+                .flatMap(Collection::stream)
+                .map(imageUrl -> createImage(currentMember, imageUrl))
+                .forEach(imageRepository::save);
+
+        return response;
     }
 }
