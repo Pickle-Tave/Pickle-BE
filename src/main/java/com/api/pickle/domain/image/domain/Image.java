@@ -38,11 +38,14 @@ public class Image extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
-    public static Image createImage(Member member, Album album, String imageUrl) {
+    public static Image createImage(Member member, String imageUrl) {
         return Image.builder()
                 .member(member)
-                .album(album)
                 .imageUrl(imageUrl)
                 .build();
+    }
+
+    public void updateAlbum(Album album) {
+        this.album = album;
     }
 }
