@@ -7,7 +7,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
-import com.api.pickle.domain.album.dto.request.UpdateAlbumRequest;
 import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.image.domain.Image;
 import com.api.pickle.domain.image.dto.request.*;
@@ -137,19 +136,20 @@ public class ImageService {
                 .map(MemberTag::getTag)
                 .toList();
 
-        List<Image> imageUrls = request.getImageUrls().stream()
-                .map(imageUrl -> imageRepository.findByImageUrl(imageUrl)
-                        .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)))
-                .toList();
+        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls());
 
-        List<ImageTag> imageTags = imageUrls.stream()
+        if (images.isEmpty()) {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        }
+
+        List<ImageTag> imageTags = images.stream()
                 .flatMap(image -> tags.stream()
                         .map(tag -> createImageTag(tag, image)))
                 .toList();
 
         imageTagRepository.saveAll(imageTags);
 
-        List<Long> imageIds = imageUrls.stream()
+        List<Long> imageIds = images.stream()
                 .map(Image::getId)
                 .toList();
 
