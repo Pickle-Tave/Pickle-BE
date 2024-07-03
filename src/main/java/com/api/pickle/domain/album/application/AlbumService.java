@@ -66,18 +66,15 @@ public class AlbumService {
     @Transactional
     public void deleteAlbum(Long albumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        Album album = albumRepository.findById(albumId)
-                .orElseThrow(()->new CustomException(ErrorCode.ALBUM_NOT_FOUND));
-        Participant findMember = participantRepository.findByMemberAndAlbum(currentMember,album)
+
+        Participant findMember = participantRepository.findParticipant(currentMember,albumId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (findMember.getHostStatus().equals(HostStatus.HOST)) {
-            deleteImageParticipantSharedAlbum(albumId);
-            albumRepository.delete(album);
-        } else {
-            throw new CustomException(ErrorCode.MEMBER_NOT_HOST);
-        }
+        if (!findMember.getHostStatus().equals(HostStatus.HOST)) throw new CustomException(ErrorCode.MEMBER_NOT_HOST);
+        deleteImageParticipantSharedAlbum(albumId);
+        albumRepository.delete(findMember.getAlbum());
     }
+
 
     private void deleteImageParticipantSharedAlbum(Long albumId) {
         imageRepository.deleteAllByAlbumId(albumId);
