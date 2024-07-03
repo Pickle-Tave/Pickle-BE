@@ -33,4 +33,12 @@ public class TagController {
     public List<MemberTagResponse> showHashTagList() {
         return tagService.showMemberHashTag();
     }
+
+    @Operation(summary = "해시태그 삭제", description = "사용자 해시태그를 삭제합니다.")
+    @DeleteMapping("/{memberTagId}")
+    public ResponseEntity<Void> deleteHashTag(@PathVariable Long memberTagId) {
+        tagService.deleteMemberHashTag(memberTagId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
+

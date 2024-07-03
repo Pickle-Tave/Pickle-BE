@@ -1,13 +1,15 @@
 package com.api.pickle.domain.album.dao;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
 public interface AlbumRepositoryCustom {
 
-    List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword);
+    Slice<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(Long memberId, String keyword, int pageSize, Long lastAlbumId);
 
-    List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus);
+    Slice<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(Long memberId, String albumStatus, int pageSize, Long lastAlbumId);
 
-    List<AlbumSearchResponse> findAllAlbumOfMemberByCreatedDateDesc(Long memberId);
+    Slice<AlbumSearchResponse> findAllAlbumOfMemberByCreatedDateDesc(Long memberId, int pageSize, Long lastAlbumId);
 }

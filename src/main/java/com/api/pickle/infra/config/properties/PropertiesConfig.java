@@ -1,5 +1,6 @@
 package com.api.pickle.infra.config.properties;
 
+import com.api.pickle.infra.config.fastapi.FastAPIProperties;
 import com.api.pickle.infra.config.jwt.JwtProperties;
 import com.api.pickle.infra.config.oauth.KakaoProperties;
 import com.api.pickle.infra.config.redis.RedisProperties;
@@ -11,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
         KakaoProperties.class,
         JwtProperties.class,
         S3Properties.class,
-        RedisProperties.class})
+        RedisProperties.class,
+        FastAPIProperties.class})
 @Configuration
-public class PropertiesConfig {}
+public class PropertiesConfig {
+}

@@ -6,10 +6,12 @@ spring:
         - s3
         - security
         - redis
+        - fastapi
       prod:
         - s3
         - security
         - redis
+        - fastapi
 
 management:
   endpoints:

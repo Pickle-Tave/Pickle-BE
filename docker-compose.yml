@@ -1,0 +1,14 @@
+services:
+  springboot:
+    image: 122971469363.dkr.ecr.ap-northeast-2.amazonaws.com/pickle:latest
+    container_name: pickle-container
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - redis
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"

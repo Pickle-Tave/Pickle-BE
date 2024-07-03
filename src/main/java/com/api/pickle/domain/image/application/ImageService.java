@@ -8,23 +8,34 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.image.dao.ImageRepository;
-import com.api.pickle.domain.image.dto.request.AlbumImageCreateRequest;
+import com.api.pickle.domain.image.domain.Image;
+import com.api.pickle.domain.image.dto.request.*;
+import com.api.pickle.domain.image.dto.response.ClassifiedImageResponse;
+import com.api.pickle.domain.image.dto.response.ImageResponse;
 import com.api.pickle.domain.image.dto.response.PresignedUrlResponse;
+import com.api.pickle.domain.imagetag.dao.ImageTagRepository;
+import com.api.pickle.domain.imagetag.domain.ImageTag;
 import com.api.pickle.domain.member.domain.Member;
+import com.api.pickle.domain.membertag.dao.MemberTagRepository;
+import com.api.pickle.domain.membertag.domain.MemberTag;
+import com.api.pickle.domain.tag.dao.TagRepository;
+import com.api.pickle.domain.tag.domain.Tag;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
+import com.api.pickle.infra.config.feign.ImageClassificationClient;
 import com.api.pickle.infra.config.s3.S3Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static com.api.pickle.domain.image.domain.Image.createImage;
+import static com.api.pickle.domain.imagetag.domain.ImageTag.createImageTag;
 
 @Service
 @Slf4j
@@ -37,25 +48,32 @@ public class ImageService {
     private final AmazonS3 amazonS3;
     private final ImageRepository imageRepository;
     private final AlbumRepository albumRepository;
+    private final ImageClassificationClient imageClassificationClient;
+    private final TagRepository tagRepository;
+    private final MemberTagRepository memberTagRepository;
+    private final ImageTagRepository imageTagRepository;
 
-    public PresignedUrlResponse createAlbumPresignedUrl(AlbumImageCreateRequest request) {
-        Member member = memberUtil.getCurrentMember();
+    public PresignedUrlResponse createImagePresignedUrl(PresignedUrlRequest request) {
+        final Member member = memberUtil.getCurrentMember();
 
-        Album album = albumRepository.findById(request.getAlbumId())
-                .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
+        List<String> presignedUrls = new ArrayList<>();
 
-        String imageKey = generateUUID();
-        String fileName = createFileName(member.getId(), album.getId(), imageKey);
+        IntStream.range(0, request.getImageUploadSize())
+                .forEach(i -> {
+                            String imageKey = generateUUID();
+                            String fileName = createFileName(member.getId(), imageKey);
 
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                createGeneratePresignedUrlRequest(s3Properties.getBucket(), fileName);
+                            GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                                    createGeneratePresignedUrlRequest(s3Properties.getBucket(), fileName);
 
-        String presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+                            String presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
 
-        imageRepository.save(createImage(member, album, imageKey));
+                            presignedUrls.add(presignedUrl);
+                        }
+                );
 
         return PresignedUrlResponse.builder()
-                .presignedUrl(presignedUrl)
+                .presignedUrls(presignedUrls)
                 .build();
     }
 
@@ -63,12 +81,10 @@ public class ImageService {
         return UUID.randomUUID().toString();
     }
 
-    private String createFileName(Long memberId, Long albumId, String imageKey) {
+    private String createFileName(Long memberId, String imageKey) {
         return memberId
                 + "/"
-                + imageKey
-                + "/"
-                + albumId;
+                + imageKey;
     }
 
     private GeneratePresignedUrlRequest createGeneratePresignedUrlRequest(String bucket, String fileName) {
@@ -76,7 +92,6 @@ public class ImageService {
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileName)
                 .withKey(fileName)
                 .withMethod(HttpMethod.PUT)
-//                .withContentType("image/" + fileExtension)
                 .withExpiration(getPresignedUrlExpiration());
 
         generatePresignedUrlRequest.addRequestParameter(
@@ -93,5 +108,69 @@ public class ImageService {
         expiration.setTime(expTime);
 
         return expiration;
+    }
+
+    public ClassifiedImageResponse classifyImages(ImageClassificationRequest request) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
+        ClassifiedImageResponse response = imageClassificationClient.getClassifiedImages(request);
+
+        response.getGroupedImages().stream()
+                .flatMap(Collection::stream)
+                .map(imageUrl -> createImage(currentMember, imageUrl))
+                .forEach(imageRepository::save);
+
+        return response;
+    }
+
+    public ImageResponse assignImageTags(ImageTagAssignRequest request) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
+        List<MemberTag> memberTags = memberTagRepository.findByMemberAndTagIds(currentMember, request.getHashtagIds());
+
+        if (memberTags.isEmpty()) {
+            throw new CustomException(ErrorCode.TAG_NOT_FOUND);
+        }
+
+        List<Tag> tags = memberTags.stream()
+                .map(MemberTag::getTag)
+                .toList();
+
+        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls());
+
+        if (images.isEmpty()) {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        }
+
+        List<ImageTag> imageTags = images.stream()
+                .flatMap(image -> tags.stream()
+                        .map(tag -> createImageTag(tag, image)))
+                .toList();
+
+        imageTagRepository.saveAll(imageTags);
+
+        List<Long> imageIds = images.stream()
+                .map(Image::getId)
+                .toList();
+
+        return ImageResponse.builder()
+                .imageIds(imageIds)
+                .build();
+    }
+
+    public void updateAllImageAlbum(UpdateAllAlbumIdRequest updateAllAlbumIdRequest) {
+        updateAllAlbumIdRequest.getUpdateAlbumIdRequestList()
+                .forEach(request -> updateImageAlbum(request.getAlbumId(), request.getImageIds()));
+    }
+
+    private void updateImageAlbum(Long albumId, List<Long> imageIds) {
+        List<Image> images = imageRepository.findAllById(imageIds);
+
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
+
+        images.stream()
+                .filter(image -> image.getAlbum() == null)
+                .forEach(image -> image.updateAlbum(album));
     }
 }

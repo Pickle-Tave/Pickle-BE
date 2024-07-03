@@ -78,8 +78,53 @@
                 {
                     "name": "AWS_ENDPOINT",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_ENDPOINT::"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_ACCESS_KEY::"
+                },
+                {
+                    "name": "AWS_SECRET_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:AWS_SECRET_KEY::"
+                },
+                {
+                    "name": "FAST_API_SERVER_URL",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:FAST_API_SERVER_URL::"
+                },
+                {
+                    "name": "FAST_API_SERVER_ENDPOINT",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:FAST_API_SERVER_ENDPOINT::"
                 }
             ],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/pickle-family",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "redis",
+            "image": "redis:alpine",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 6379,
+                    "hostPort": 6379,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
             "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",

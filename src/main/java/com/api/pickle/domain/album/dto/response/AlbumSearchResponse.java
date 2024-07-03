@@ -18,10 +18,14 @@ public class AlbumSearchResponse {
     @Schema(description = "검색된 앨범의 상태")
     private String searchedAlbumStatus;
 
+    @Schema(description = "검색된 앨범의 북마크 상태")
+    private String searchedAlbumMarkedStatus;
+
     @QueryProjection
-    public AlbumSearchResponse(Long albumId, String searchedAlbumName, String searchedAlbumStatus) {
+    public AlbumSearchResponse(Long albumId, String searchedAlbumName, String searchedAlbumStatus, String searchedAlbumMarkedStatus) {
         this.albumId = albumId;
         this.searchedAlbumName = searchedAlbumName;
         this.searchedAlbumStatus = searchedAlbumStatus;
+        this.searchedAlbumMarkedStatus = searchedAlbumMarkedStatus;
     }
 }

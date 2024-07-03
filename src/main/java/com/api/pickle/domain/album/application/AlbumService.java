@@ -5,6 +5,7 @@ import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
 import com.api.pickle.domain.image.dao.ImageRepository;
+import com.api.pickle.domain.bookmark.application.BookmarkService;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.domain.participant.domain.HostStatus;
@@ -15,10 +16,9 @@ import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +27,7 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final ParticipantRepository participantRepository;
     private final SharedAlbumService sharedAlbumService;
+    private final BookmarkService bookmarkService;
     private final MemberUtil memberUtil;
     private final ImageRepository imageRepository;
     private final SharedAlbumRepository sharedAlbumRepository;
@@ -37,7 +38,10 @@ public class AlbumService {
         Album newAlbum = Album.createPrivateAlbum(albumName);
 
         albumRepository.save(newAlbum);
-        participantRepository.save(Participant.createHostParticipant(newAlbum, currentMember));
+
+        Participant participant = Participant.createHostParticipant(newAlbum, currentMember);
+        participantRepository.save(participant);
+        bookmarkService.createBookmark(participant);
     }
 
     @Transactional
@@ -50,17 +54,22 @@ public class AlbumService {
         return new UpdateAlbumResponse(albumId, newAlbumName);
     }
 
-    public List<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword) {
-        return albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(keyword);
-    }
-
-    public List<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus) {
-        return albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(albumStatus);
-    }
-
-    public List<AlbumSearchResponse> findAllAlbumOfMember(){
+    public Slice<AlbumSearchResponse> searchKeywordInAlbumOrderByCreatedDateDesc(String keyword, int pageSize, Long lastAlbumId) {
         final Member currentMember = memberUtil.getCurrentMember();
-        return albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId());
+        Slice<AlbumSearchResponse> response =  albumRepository.searchKeywordInAlbumOrderByCreatedDateDesc(currentMember.getId(), keyword, pageSize, lastAlbumId);
+        return bookmarkService.reflectRedisMarkStatus(response, currentMember.getId());
+    }
+
+    public Slice<AlbumSearchResponse> searchAlbumStatusInAlbumOrderByCreatedDateDesc(String albumStatus, int pageSize, Long lastAlbumId) {
+        final Member currentMember = memberUtil.getCurrentMember();
+        Slice<AlbumSearchResponse> response =  albumRepository.searchAlbumStatusInAlbumOrderByCreatedDateDesc(currentMember.getId(), albumStatus, pageSize, lastAlbumId);
+        return bookmarkService.reflectRedisMarkStatus(response, currentMember.getId());
+    }
+
+    public Slice<AlbumSearchResponse> findAllAlbumOfMember(int pageSize, Long lastAlbumId) {
+        final Member currentMember = memberUtil.getCurrentMember();
+        Slice<AlbumSearchResponse> response =  albumRepository.findAllAlbumOfMemberByCreatedDateDesc(currentMember.getId(), pageSize, lastAlbumId);
+        return bookmarkService.reflectRedisMarkStatus(response, currentMember.getId());
     }
 
     @Transactional
