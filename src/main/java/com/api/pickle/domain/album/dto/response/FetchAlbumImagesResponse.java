@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FetchAlbumImagesResponse {
-    @Schema(description = "검색된 이미지의 해시태그")
+    @Schema(description = "검색된 이미지의 id")
     private Long imageId;
 
     @Schema(description = "검색된 이미지의 해시태그")
