@@ -81,4 +81,11 @@ public class AlbumController {
                                                                @RequestParam(value = "size") int pageSize){
         return bookmarkService.searchAlbumInfoWithBookmarked(pageSize, lastAlbumId);
     }
+    @Operation(summary = "앨범 삭제", description = "앨범을 삭제합니다.")
+    @DeleteMapping("/delete/{albumId}")
+    public ResponseEntity<Void> updateAlbumName(@PathVariable Long albumId) {
+        albumService.deleteAlbum(albumId);
+        return ResponseEntity.ok().build();
+    }
+
 }
