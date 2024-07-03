@@ -45,6 +45,7 @@ public enum ErrorCode {
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "해시태그가 존재하지 않습니다."),
 
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지가 존재하지 않습니다."),
+    IMAGE_NOT_FOUND_IN_ALBUM(HttpStatus.NOT_FOUND, "해당 앨범에 이미지가 존재하지 않습니다."),
 
     NOT_TAG_OWNER(HttpStatus.BAD_REQUEST, "해당 해시태그의 소유자가 아닙니다.")
     ;

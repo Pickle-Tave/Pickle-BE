@@ -5,6 +5,7 @@ import com.api.pickle.domain.album.application.AlbumService;
 import com.api.pickle.domain.album.dto.request.AlbumCreateRequest;
 import com.api.pickle.domain.album.dto.request.UpdateAlbumRequest;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
+import com.api.pickle.domain.album.dto.response.FetchAlbumImagesResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
 import com.api.pickle.domain.bookmark.application.BookmarkService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,6 +82,7 @@ public class AlbumController {
                                                                @RequestParam(value = "size") int pageSize){
         return bookmarkService.searchAlbumInfoWithBookmarked(pageSize, lastAlbumId);
     }
+
     @Operation(summary = "앨범 삭제", description = "앨범을 삭제합니다.")
     @DeleteMapping("/delete/{albumId}")
     public ResponseEntity<Void> updateAlbumName(@PathVariable Long albumId) {
@@ -88,4 +90,14 @@ public class AlbumController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "앨범 이미지 조회", description = "개별 앨범에 존재하는 이미지를 조회합니다.")
+    @GetMapping
+    public Slice<FetchAlbumImagesResponse> findImageFromAlbum(@Parameter(description = "조회할 앨범의 id", example = "1")
+                                                                  @RequestParam Long albumId,
+                                                              @Parameter(description = "이전 페이지의 마지막 이미지 ID (첫 페이지는 비워두세요.)")
+                                                                  @RequestParam(required = false) Long lastImageId,
+                                                              @Parameter(description = "페이지당 이미지 수", example = "1")
+                                                                  @RequestParam(value = "size") int pageSize) {
+        return albumService.findImagesFromAlbum(albumId, pageSize, lastImageId);
+    }
 }
