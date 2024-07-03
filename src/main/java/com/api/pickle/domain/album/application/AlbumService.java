@@ -7,7 +7,6 @@ import com.api.pickle.domain.album.dto.response.FetchAlbumImagesResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
 import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.bookmark.application.BookmarkService;
-import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.domain.participant.domain.HostStatus;
@@ -95,7 +94,12 @@ public class AlbumService {
 
     public Slice<FetchAlbumImagesResponse> findImagesFromAlbum(Long albumId, int pageSize, Long lastAlbumId){
         final Member currentMember = memberUtil.getCurrentMember();
-        // 앨범 삭제로직의 querydsl 코드 필요 -> validate 진행
+        validateAlbumWithMember(albumId, currentMember);
         return imageRepository.findAllImagesByCreatedDateDesc(albumId, pageSize, lastAlbumId);
+    }
+
+    private void validateAlbumWithMember(Long albumId, Member member){
+        participantRepository.findParticipant(member, albumId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
     }
 }
