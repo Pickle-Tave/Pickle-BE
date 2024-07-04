@@ -18,8 +18,8 @@ import com.api.pickle.domain.imagetag.domain.ImageTag;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.membertag.dao.MemberTagRepository;
 import com.api.pickle.domain.membertag.domain.MemberTag;
+import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.domain.tag.dao.TagRepository;
-import com.api.pickle.domain.tag.domain.Tag;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import static com.api.pickle.domain.image.domain.Image.createImage;
 import static com.api.pickle.domain.image.domain.Image.createImage;
 import static com.api.pickle.domain.imagetag.domain.ImageTag.createImageTag;
 
@@ -52,6 +53,7 @@ public class ImageService {
     private final TagRepository tagRepository;
     private final MemberTagRepository memberTagRepository;
     private final ImageTagRepository imageTagRepository;
+    private final ParticipantRepository participantRepository;
 
     public PresignedUrlResponse createImagePresignedUrl(PresignedUrlRequest request) {
         final Member member = memberUtil.getCurrentMember();
@@ -129,8 +131,11 @@ public class ImageService {
         MemberTag memberTag = memberTagRepository.findByMemberAndTagId(currentMember, request.getHashtagId())
                 .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND));
 
-        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls())
-                .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
+        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls());
+
+        if (images.isEmpty()) {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        }
 
         List<ImageTag> imageTags = images.stream()
                 .map(image -> createImageTag(memberTag.getTag(), image))
@@ -153,13 +158,37 @@ public class ImageService {
     }
 
     private void updateImageAlbum(Long albumId, List<Long> imageIds) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
         List<Image> images = imageRepository.findAllById(imageIds);
 
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
 
+        validateAlbumWithMember(album.getId(), currentMember);
+
         images.stream()
                 .filter(image -> image.getAlbum() == null)
                 .forEach(image -> image.updateAlbum(album));
+    }
+
+    public void addImageAlbum(AddImageAlbumRequest request) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
+        Album album = albumRepository.findById(request.getAlbumId())
+                .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
+
+        validateAlbumWithMember(album.getId(), currentMember);
+
+        List<Image> images = request.getImageUrls().stream()
+                .map(imageUrl -> Image.createImage(currentMember, album, imageUrl))
+                .toList();
+
+        imageRepository.saveAll(images);
+    }
+
+    private void validateAlbumWithMember(Long albumId, Member member){
+        participantRepository.findParticipant(member, albumId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
     }
 }
