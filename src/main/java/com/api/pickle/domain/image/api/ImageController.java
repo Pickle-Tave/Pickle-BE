@@ -42,14 +42,14 @@ public class ImageController {
     }
 
     @Operation(summary = "앨범에 분류된 이미지 저장", description = "앨범에 분류된 이미지를 저장합니다.")
-    @PostMapping("/save/album")
+    @PostMapping("/save-album")
     public ResponseEntity<Void> updateImageAlbum(@RequestBody UpdateAllAlbumIdRequest request) {
         imageService.updateAllImageAlbum(request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @Operation(summary = "앨범에 이미지 추가", description = "앨범에 이미지를 추가합니다.")
-    @PostMapping("/add/album")
+    @PostMapping("/add-album")
     public ResponseEntity<Void> addImageAlbum(@RequestBody AddImageAlbumRequest request) {
         imageService.addImageAlbum(request);
         return ResponseEntity.status(HttpStatus.OK).build();
