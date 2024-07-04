@@ -19,7 +19,6 @@ import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.membertag.dao.MemberTagRepository;
 import com.api.pickle.domain.membertag.domain.MemberTag;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
-import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.domain.tag.dao.TagRepository;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
@@ -35,7 +34,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static com.api.pickle.domain.image.domain.Image.addImage;
+import static com.api.pickle.domain.image.domain.Image.createImage;
 import static com.api.pickle.domain.image.domain.Image.createImage;
 import static com.api.pickle.domain.imagetag.domain.ImageTag.createImageTag;
 
@@ -182,7 +181,7 @@ public class ImageService {
         validateAlbumWithMember(album.getId(), currentMember);
 
         List<Image> images = request.getImageUrls().stream()
-                .map(imageUrl -> addImage(currentMember, album, imageUrl))
+                .map(imageUrl -> Image.createImage(currentMember, album, imageUrl))
                 .toList();
 
         imageRepository.saveAll(images);

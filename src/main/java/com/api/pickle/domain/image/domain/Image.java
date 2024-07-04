@@ -45,7 +45,7 @@ public class Image extends BaseTimeEntity {
                 .build();
     }
 
-    public static Image addImage(Member member, Album album, String imageUrl) {
+    public static Image createImage(Member member, Album album, String imageUrl) {
         return Image.builder()
                 .member(member)
                 .album(album)
