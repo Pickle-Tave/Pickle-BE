@@ -98,7 +98,7 @@ public class AlbumService {
         return imageRepository.findAllImagesByCreatedDateDesc(albumId, pageSize, lastAlbumId);
     }
 
-    private void validateAlbumWithMember(Long albumId, Member member){
+    public void validateAlbumWithMember(Long albumId, Member member){
         participantRepository.findParticipant(member, albumId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
     }
