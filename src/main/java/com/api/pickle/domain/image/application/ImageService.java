@@ -129,8 +129,11 @@ public class ImageService {
         MemberTag memberTag = memberTagRepository.findByMemberAndTagId(currentMember, request.getHashtagId())
                 .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND));
 
-        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls())
-                .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
+        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls());
+
+        if (images.isEmpty()) {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        }
 
         List<ImageTag> imageTags = images.stream()
                 .map(image -> createImageTag(memberTag.getTag(), image))

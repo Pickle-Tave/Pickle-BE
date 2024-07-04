@@ -23,12 +23,11 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<List<Image>> findByImageUrls(List<String> imageUrl) {
-        return Optional.ofNullable(
-                queryFactory
+    public List<Image> findByImageUrls(List<String> imageUrl) {
+        return queryFactory
                 .selectFrom(image)
                 .where(image.imageUrl.in(imageUrl))
-                .fetch());
+                .fetch();
     }
 
     @Override
