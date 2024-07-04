@@ -7,6 +7,7 @@ import com.api.pickle.domain.album.dto.response.FetchAlbumImagesResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
 import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.bookmark.application.BookmarkService;
+import com.api.pickle.domain.imagetag.dao.ImageTagRepository;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.domain.participant.domain.HostStatus;
@@ -32,6 +33,7 @@ public class AlbumService {
     private final BookmarkService bookmarkService;
     private final MemberUtil memberUtil;
     private final SharedAlbumRepository sharedAlbumRepository;
+    private final ImageTagRepository imageTagRepository;
 
     @Transactional
     public void createAlbum(String albumName){
@@ -87,6 +89,7 @@ public class AlbumService {
 
 
     private void deleteImageParticipantSharedAlbum(Long albumId) {
+        imageTagRepository.deleteByAlbumId(albumId);
         imageRepository.deleteAllByAlbumId(albumId);
         participantRepository.deleteAllByAlbumId(albumId);
         sharedAlbumRepository.deleteByAlbumId(albumId);
