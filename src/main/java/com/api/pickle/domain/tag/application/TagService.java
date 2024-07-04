@@ -27,12 +27,13 @@ public class TagService {
 
     public void createMemberHashTag(String name) {
         final Member currentMember = memberUtil.getCurrentMember();
+
         List<MemberTag> memberTagList = memberTagRepository.findAllByMemberId(currentMember.getId());
         validateTagSize(memberTagList);
         validateAlreadyExist(name, memberTagList);
-        Tag hashTag = Tag.createTag(name);
-        MemberTag memberTag = MemberTag.createMemberTag(currentMember,hashTag);
 
+        Tag hashTag = tagRepository.findByName(name).orElseGet(() -> Tag.createTag(name));
+        MemberTag memberTag = MemberTag.createMemberTag(currentMember,hashTag);
         tagRepository.save(hashTag);
         memberTagRepository.save(memberTag);
     }
