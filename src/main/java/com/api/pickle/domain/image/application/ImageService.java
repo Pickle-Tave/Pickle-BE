@@ -126,25 +126,14 @@ public class ImageService {
     public ImageResponse assignImageTags(ImageTagAssignRequest request) {
         final Member currentMember = memberUtil.getCurrentMember();
 
-        List<MemberTag> memberTags = memberTagRepository.findByMemberAndTagIds(currentMember, request.getHashtagIds());
+        MemberTag memberTag = memberTagRepository.findByMemberAndTagId(currentMember, request.getHashtagId())
+                .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND));
 
-        if (memberTags.isEmpty()) {
-            throw new CustomException(ErrorCode.TAG_NOT_FOUND);
-        }
-
-        List<Tag> tags = memberTags.stream()
-                .map(MemberTag::getTag)
-                .toList();
-
-        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls());
-
-        if (images.isEmpty()) {
-            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
-        }
+        List<Image> images = imageRepository.findByImageUrls(request.getImageUrls())
+                .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
 
         List<ImageTag> imageTags = images.stream()
-                .flatMap(image -> tags.stream()
-                        .map(tag -> createImageTag(tag, image)))
+                .map(image -> createImageTag(memberTag.getTag(), image))
                 .toList();
 
         imageTagRepository.saveAll(imageTags);

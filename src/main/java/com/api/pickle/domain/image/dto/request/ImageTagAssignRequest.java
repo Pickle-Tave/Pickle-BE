@@ -15,6 +15,6 @@ public class ImageTagAssignRequest {
     @Schema(description = "분류된 이미지 그룹")
     private List<String> imageUrls;
 
-    @Schema(description ="지정하고자 하는 해시태그 리스트")
-    private List<Long> hashtagIds;
+    @Schema(description ="지정하고자 하는 해시태그")
+    private Long hashtagId;
 }
