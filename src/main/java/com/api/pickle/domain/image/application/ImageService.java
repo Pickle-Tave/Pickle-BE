@@ -5,8 +5,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.api.pickle.domain.album.application.AlbumService;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
+import com.api.pickle.domain.album.dto.response.FetchAlbumImagesResponse;
 import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.image.domain.Image;
 import com.api.pickle.domain.image.dto.request.*;
@@ -26,6 +28,7 @@ import com.api.pickle.infra.config.feign.ImageClassificationClient;
 import com.api.pickle.infra.config.s3.S3Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +51,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final AlbumRepository albumRepository;
     private final ImageClassificationClient imageClassificationClient;
+    private final AlbumService albumService;
     private final MemberTagRepository memberTagRepository;
     private final ImageTagRepository imageTagRepository;
     private final ParticipantRepository participantRepository;
@@ -198,5 +202,17 @@ public class ImageService {
         imageTagRepository.deleteAll(imageTags);
 
         imageRepository.deleteAll(images);
+    }
+
+    public Slice<FetchAlbumImagesResponse> searchImageByTag(Long albumId, String tagName, int pageSize, Long lastAlbumId){
+        final Member currentMember = memberUtil.getCurrentMember();
+        albumService.validateAlbumWithMember(albumId, currentMember);
+        validateTagOwner(currentMember, tagName);
+        return imageRepository.findImagesByTagDateDesc(albumId, tagName, pageSize, lastAlbumId);
+    }
+
+    public void validateTagOwner(Member member, String tagName){
+        memberTagRepository.findByMemberAndTagName(member, tagName)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_TAG_OWNER));
     }
 }

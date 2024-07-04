@@ -15,4 +15,6 @@ public interface MemberTagRepository extends JpaRepository<MemberTag,Long> {
 
     @Query("select mt from MemberTag mt where mt.member = :member and mt.tag.id = :tagId")
     Optional<MemberTag> findByMemberAndTagId(@Param("member") Member member, @Param("tagId") Long tagId);
+
+    Optional<MemberTag> findByMemberAndTagName(Member member, String tagName);
 }

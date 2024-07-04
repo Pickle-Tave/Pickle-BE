@@ -74,6 +74,28 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom{
         return images;
     }
 
+    public Slice<FetchAlbumImagesResponse> findImagesByTagDateDesc(Long albumId, String tagName, int pageSize, Long lastImageId) {
+        List<FetchAlbumImagesResponse> results = queryFactory
+                .select(new QFetchAlbumImagesResponse(
+                        imageTag.image.id,
+                        imageTag.tag.name,
+                        imageTag.image.imageUrl
+                ))
+                .from(imageTag)
+                .where(lastImageId(lastImageId),
+                        imageTag.image.album.id.eq(albumId),
+                        imageTag.tag.name.eq(tagName))
+                .orderBy(imageTag.image.createdDate.desc())
+                .limit(pageSize + 1)
+                .fetch();
+
+        if (results.isEmpty()) {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND_BY_TAG);
+        }
+
+        return checkLastPage(pageSize, results);
+    }
+
     private BooleanExpression lastImageId(Long imageId) {
         if (imageId == null) {
             return null;

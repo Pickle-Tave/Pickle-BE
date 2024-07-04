@@ -13,4 +13,5 @@ public interface ImageRepositoryCustom {
     Slice<FetchAlbumImagesResponse> findAllImagesByCreatedDateDesc(Long albumId, int pageSize, Long lastImageId);
 
     List<Image> findByImageAndMember(List<Long> imageIds, Member member);
+    Slice<FetchAlbumImagesResponse> findImagesByTagDateDesc(Long albumId, String tagName, int pageSize, Long lastImageId);
 }
