@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "이미지 API", description = "이미지 API입니다.")
 @RestController
@@ -52,6 +49,13 @@ public class ImageController {
     @PostMapping("/add-album")
     public ResponseEntity<Void> addImageAlbum(@RequestBody AddImageAlbumRequest request) {
         imageService.addImageAlbum(request);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(summary = "이미지 삭제", description = "이미지를 삭제합니다.")
+    @DeleteMapping("/delete-image")
+    public ResponseEntity<Void> deleteImage(@RequestBody DeleteImageRequest request) {
+        imageService.deleteImage(request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

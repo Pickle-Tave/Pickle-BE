@@ -19,7 +19,6 @@ import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.membertag.dao.MemberTagRepository;
 import com.api.pickle.domain.membertag.domain.MemberTag;
 import com.api.pickle.domain.participant.dao.ParticipantRepository;
-import com.api.pickle.domain.tag.dao.TagRepository;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
@@ -35,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static com.api.pickle.domain.image.domain.Image.createImage;
-import static com.api.pickle.domain.image.domain.Image.createImage;
 import static com.api.pickle.domain.imagetag.domain.ImageTag.createImageTag;
 
 @Service
@@ -50,7 +48,6 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final AlbumRepository albumRepository;
     private final ImageClassificationClient imageClassificationClient;
-    private final TagRepository tagRepository;
     private final MemberTagRepository memberTagRepository;
     private final ImageTagRepository imageTagRepository;
     private final ParticipantRepository participantRepository;
@@ -190,5 +187,16 @@ public class ImageService {
     private void validateAlbumWithMember(Long albumId, Member member){
         participantRepository.findParticipant(member, albumId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
+    }
+
+    public void deleteImage(DeleteImageRequest request) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
+        List<Image> images = imageRepository.findByImageAndMember(request.getImageIds(), currentMember);
+
+        List<ImageTag> imageTags = imageTagRepository.findByImage(images);
+        imageTagRepository.deleteAll(imageTags);
+
+        imageRepository.deleteAll(images);
     }
 }
