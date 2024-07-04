@@ -38,13 +38,14 @@ public enum ErrorCode {
     SHARED_ALBUM_NOT_FOUND(HttpStatus.BAD_REQUEST, "공유 앨범을 찾을 수 없습니다."),
     SHARED_ALBUM_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     MEMBER_ALREADY_JOINED(HttpStatus.BAD_REQUEST, "이미 참여한 앨범입니다."),
-
+    MEMBER_NOT_HOST(HttpStatus.BAD_REQUEST,"앨범 호스트가 아닙니다."),
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크 정보가 존재하지 않습니다."),
     BOOKMARKED_ALBUM_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크가 적용된 앨범이 존재하지 않습니다."),
 
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "해시태그가 존재하지 않습니다."),
 
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지가 존재하지 않습니다."),
+    IMAGE_NOT_FOUND_IN_ALBUM(HttpStatus.NOT_FOUND, "해당 앨범에 이미지가 존재하지 않습니다."),
 
     NOT_TAG_OWNER(HttpStatus.BAD_REQUEST, "해당 해시태그의 소유자가 아닙니다.")
     ;
