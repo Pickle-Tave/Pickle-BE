@@ -18,6 +18,7 @@ import com.api.pickle.domain.imagetag.domain.ImageTag;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.membertag.dao.MemberTagRepository;
 import com.api.pickle.domain.membertag.domain.MemberTag;
+import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.domain.tag.dao.TagRepository;
 import com.api.pickle.global.error.exception.CustomException;
@@ -53,6 +54,7 @@ public class ImageService {
     private final TagRepository tagRepository;
     private final MemberTagRepository memberTagRepository;
     private final ImageTagRepository imageTagRepository;
+    private final ParticipantRepository participantRepository;
 
     public PresignedUrlResponse createImagePresignedUrl(PresignedUrlRequest request) {
         final Member member = memberUtil.getCurrentMember();
@@ -157,10 +159,14 @@ public class ImageService {
     }
 
     private void updateImageAlbum(Long albumId, List<Long> imageIds) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
         List<Image> images = imageRepository.findAllById(imageIds);
 
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
+
+        validateAlbumWithMember(album.getId(), currentMember);
 
         images.stream()
                 .filter(image -> image.getAlbum() == null)
@@ -173,10 +179,17 @@ public class ImageService {
         Album album = albumRepository.findById(request.getAlbumId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
 
+        validateAlbumWithMember(album.getId(), currentMember);
+
         List<Image> images = request.getImageUrls().stream()
                 .map(imageUrl -> addImage(currentMember, album, imageUrl))
                 .toList();
 
         imageRepository.saveAll(images);
+    }
+
+    private void validateAlbumWithMember(Long albumId, Member member){
+        participantRepository.findParticipant(member, albumId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
     }
 }
