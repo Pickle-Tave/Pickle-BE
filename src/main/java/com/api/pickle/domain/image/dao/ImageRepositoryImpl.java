@@ -3,6 +3,7 @@ package com.api.pickle.domain.image.dao;
 import com.api.pickle.domain.album.dto.response.FetchAlbumImagesResponse;
 import com.api.pickle.domain.album.dto.response.QFetchAlbumImagesResponse;
 import com.api.pickle.domain.image.domain.Image;
+import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -52,6 +53,27 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom{
         return checkLastPage(pageSize, results);
     }
 
+    @Override
+    public List<Image> findByImageAndMember(List<Long> imageIds, Member member) {
+        List<Image> images = queryFactory
+                .selectFrom(image)
+                .where(image.id.in(imageIds))
+                .orderBy(image.createdDate.desc())
+                .fetch();
+
+        if (images.isEmpty()) {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        }
+
+        images.stream().
+                filter(image -> !image.getMember().equals(member))
+                .forEach(image -> {
+                    throw new CustomException(ErrorCode.NOT_IMAGE_OWNER);
+                });
+
+        return images;
+    }
+
     private BooleanExpression lastImageId(Long imageId) {
         if (imageId == null) {
             return null;
@@ -71,4 +93,6 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom{
 
         return new SliceImpl<>(results, PageRequest.of(0, pageSize), hasNext);
     }
+
+
 }
