@@ -18,8 +18,8 @@ import com.api.pickle.domain.imagetag.domain.ImageTag;
 import com.api.pickle.domain.member.domain.Member;
 import com.api.pickle.domain.membertag.dao.MemberTagRepository;
 import com.api.pickle.domain.membertag.domain.MemberTag;
+import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.domain.tag.dao.TagRepository;
-import com.api.pickle.domain.tag.domain.Tag;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import static com.api.pickle.domain.image.domain.Image.addImage;
 import static com.api.pickle.domain.image.domain.Image.createImage;
 import static com.api.pickle.domain.imagetag.domain.ImageTag.createImageTag;
 
@@ -164,5 +165,18 @@ public class ImageService {
         images.stream()
                 .filter(image -> image.getAlbum() == null)
                 .forEach(image -> image.updateAlbum(album));
+    }
+
+    public void addImageAlbum(AddImageAlbumRequest request) {
+        final Member currentMember = memberUtil.getCurrentMember();
+
+        Album album = albumRepository.findById(request.getAlbumId())
+                .orElseThrow(() -> new CustomException(ErrorCode.ALBUM_NOT_FOUND));
+
+        List<Image> images = request.getImageUrls().stream()
+                .map(imageUrl -> addImage(currentMember, album, imageUrl))
+                .toList();
+
+        imageRepository.saveAll(images);
     }
 }
