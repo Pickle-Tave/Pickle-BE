@@ -87,7 +87,7 @@ public class AlbumService {
         final Member currentMember = memberUtil.getCurrentMember();
 
         Participant findMember = participantRepository.findParticipant(currentMember,albumId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
 
         if (!findMember.getHostStatus().equals(HostStatus.HOST)) throw new CustomException(ErrorCode.MEMBER_NOT_HOST);
 
