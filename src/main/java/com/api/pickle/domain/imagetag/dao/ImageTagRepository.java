@@ -7,7 +7,4 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ImageTagRepository extends JpaRepository<ImageTag, Long>, ImageTagRepositoryCustom {
-    @Modifying
-    @Query("DELETE FROM ImageTag it WHERE it.image.album.id = :albumId")
-    void deleteByAlbumId(@Param("albumId") Long albumId);
 }
