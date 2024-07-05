@@ -21,7 +21,11 @@ public class Member extends BaseTimeEntity {
 
     private String nickname;
 
-    @Embedded private OauthInfo oauthInfo;
+    @Embedded
+    private OauthInfo oauthInfo;
+
+    @Embedded
+    private FcmInfo fcmInfo;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -31,9 +35,10 @@ public class Member extends BaseTimeEntity {
     private MemberStatus status;
 
     @Builder
-    private Member(String nickname, OauthInfo oauthInfo, MemberRole role, MemberStatus status) {
+    private Member(String nickname, OauthInfo oauthInfo, FcmInfo fcmInfo, MemberRole role, MemberStatus status) {
         this.nickname = nickname;
         this.oauthInfo = oauthInfo;
+        this.fcmInfo = fcmInfo;
         this.role = role;
         this.status = status;
     }
@@ -44,6 +49,7 @@ public class Member extends BaseTimeEntity {
                 .role(MemberRole.USER)
                 .status(MemberStatus.NORMAL)
                 .oauthInfo(oauthInfo)
+                .fcmInfo(FcmInfo.createFcmInfo())
                 .build();
     }
 
@@ -52,6 +58,15 @@ public class Member extends BaseTimeEntity {
             throw new CustomException(ErrorCode.MEMBER_ALREADY_DELETED);
         }
         this.status = MemberStatus.DELETED;
+        this.fcmInfo = FcmInfo.disableAlarm(FcmInfo.createFcmInfo());
+    }
+
+    public void toggleAppAlarmState(FcmInfo fcmState) {
+        fcmInfo = FcmInfo.toggleAlarm(fcmState);
+    }
+
+    public void updateFcmToken(FcmInfo fcmState, String fcmToken) {
+        fcmInfo = FcmInfo.updateToken(fcmState, fcmToken);
     }
 
     public void reEnroll(){
