@@ -2,6 +2,7 @@ package com.api.pickle.domain.member.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
