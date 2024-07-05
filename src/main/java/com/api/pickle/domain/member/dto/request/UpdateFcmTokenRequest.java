@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class UpdateFcmTokenRequest {
 
