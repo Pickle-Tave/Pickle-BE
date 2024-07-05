@@ -2,8 +2,11 @@ package com.api.pickle.domain.bookmark.dao;
 
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.QAlbumSearchResponse;
+import com.api.pickle.domain.bookmark.domain.Bookmark;
 import com.api.pickle.domain.bookmark.domain.MarkStatus;
+import com.api.pickle.domain.bookmark.domain.QBookmark;
 import com.api.pickle.domain.bookmark.dto.RedisBookmarkStatusDto;
+import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,6 +20,7 @@ import java.util.List;
 
 import static com.api.pickle.domain.album.domain.QAlbum.album;
 import static com.api.pickle.domain.bookmark.domain.QBookmark.bookmark;
+import static com.api.pickle.domain.imagetag.domain.QImageTag.imageTag;
 import static com.api.pickle.domain.participant.domain.QParticipant.participant;
 
 @RequiredArgsConstructor
@@ -72,5 +76,12 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
         }
 
         return new SliceImpl<>(results, PageRequest.of(0, pageSize), hasNext);
+    }
+
+    @Override
+    public List<Bookmark> findByParticipant(List<Participant> participants) {
+        return queryFactory.selectFrom(bookmark)
+                            .where(bookmark.participant.in(participants))
+                            .fetch();
     }
 }
