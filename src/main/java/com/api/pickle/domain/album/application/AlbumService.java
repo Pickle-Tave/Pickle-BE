@@ -106,7 +106,7 @@ public class AlbumService {
         List<Bookmark> bookmarks = bookmarkRepository.findByParticipant(participants);
         bookmarkRepository.deleteAll(bookmarks);
         participantRepository.deleteAll(participants);
-
+      
         sharedAlbumRepository.deleteByAlbumId(albumId);
     }
 

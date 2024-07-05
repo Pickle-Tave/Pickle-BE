@@ -2,6 +2,7 @@ package com.api.pickle.domain.member.application;
 
 import com.api.pickle.domain.auth.dao.RefreshTokenRepository;
 import com.api.pickle.domain.member.domain.Member;
+import com.api.pickle.domain.member.dto.request.UpdateFcmTokenRequest;
 import com.api.pickle.domain.member.dto.response.MyPageResponse;
 import com.api.pickle.global.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,15 @@ public class MemberService {
                 .role(currentMember.getRole())
                 .status(currentMember.getStatus())
                 .build();
+    }
+
+    public void toggleAppAlarm() {
+        final Member currentMember = memberUtil.getCurrentMember();
+        currentMember.toggleAppAlarmState(currentMember.getFcmInfo());
+    }
+
+    public void updateFcmToken(UpdateFcmTokenRequest updateFcmTokenRequest) {
+        final Member currentMember = memberUtil.getCurrentMember();
+        currentMember.updateFcmToken(currentMember.getFcmInfo(), updateFcmTokenRequest.getFcmToken());
     }
 }

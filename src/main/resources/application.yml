@@ -26,3 +26,6 @@ management:
   endpoint:
     health:
       enabled: true
+
+fcm:
+  certification: ${FCM_CERTIFICATION}

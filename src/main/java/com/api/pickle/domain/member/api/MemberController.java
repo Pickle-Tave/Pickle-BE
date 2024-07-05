@@ -1,6 +1,7 @@
 package com.api.pickle.domain.member.api;
 
 import com.api.pickle.domain.member.application.MemberService;
+import com.api.pickle.domain.member.dto.request.UpdateFcmTokenRequest;
 import com.api.pickle.domain.member.dto.response.MyPageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,20 @@ public class MemberController {
     public ResponseEntity<MyPageResponse> memberMyPage() {
         MyPageResponse memberMyPageResponse = memberService.getMemberMyPageInfo();
         return new ResponseEntity<MyPageResponse>(memberMyPageResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "토글 여부 변경", description = "기존 토글 값을 변경합니다.")
+    @PatchMapping("/alarm")
+    public ResponseEntity<Void> memberToggleAppAlarmStateUpdate() {
+        memberService.toggleAppAlarm();
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "FCM 토큰 갱신", description = "FCM 토큰을 갱신합니다.")
+    @PatchMapping("/fcm-token")
+    public ResponseEntity<Void> memberFcmTokenUpdate(@RequestBody UpdateFcmTokenRequest updateFcmTokenRequest) {
+        memberService.updateFcmToken(updateFcmTokenRequest);
+        return ResponseEntity.ok().build();
     }
 
 }
