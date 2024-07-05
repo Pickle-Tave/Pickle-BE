@@ -94,6 +94,10 @@
                 {
                     "name": "FAST_API_SERVER_ENDPOINT",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:FAST_API_SERVER_ENDPOINT::"
+                },
+                {
+                    "name": "FCM_CERTIFICATION",
+                    "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:122971469363:secret:playauto/gmp-2dXhTZ:FCM_CERTIFICATION::"
                 }
             ],
             "ulimits": [],
