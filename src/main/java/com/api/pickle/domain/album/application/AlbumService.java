@@ -5,6 +5,8 @@ import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.FetchAlbumImagesResponse;
 import com.api.pickle.domain.album.dto.response.UpdateAlbumResponse;
+import com.api.pickle.domain.bookmark.dao.BookmarkRepository;
+import com.api.pickle.domain.bookmark.domain.Bookmark;
 import com.api.pickle.domain.image.dao.ImageRepository;
 import com.api.pickle.domain.bookmark.application.BookmarkService;
 import com.api.pickle.domain.image.domain.Image;
@@ -35,6 +37,7 @@ public class AlbumService {
     private final ImageRepository imageRepository;
     private final SharedAlbumService sharedAlbumService;
     private final BookmarkService bookmarkService;
+    private final BookmarkRepository bookmarkRepository;
     private final MemberUtil memberUtil;
     private final SharedAlbumRepository sharedAlbumRepository;
     private final ImageTagRepository imageTagRepository;
@@ -84,9 +87,10 @@ public class AlbumService {
         final Member currentMember = memberUtil.getCurrentMember();
 
         Participant findMember = participantRepository.findParticipant(currentMember,albumId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_ALBUM_OWNER));
 
         if (!findMember.getHostStatus().equals(HostStatus.HOST)) throw new CustomException(ErrorCode.MEMBER_NOT_HOST);
+
         deleteImageParticipantSharedAlbum(albumId);
         albumRepository.delete(findMember.getAlbum());
     }
@@ -97,7 +101,12 @@ public class AlbumService {
         List<ImageTag> imageTags = imageTagRepository.findByImage(images);
         imageTagRepository.deleteAll(imageTags);
         imageRepository.deleteAll(images);
-        participantRepository.deleteAllByAlbumId(albumId);
+
+        List<Participant> participants = participantRepository.findAllByAlbumId(albumId);
+        List<Bookmark> bookmarks = bookmarkRepository.findByParticipant(participants);
+        bookmarkRepository.deleteAll(bookmarks);
+        participantRepository.deleteAll(participants);
+      
         sharedAlbumRepository.deleteByAlbumId(albumId);
     }
 
