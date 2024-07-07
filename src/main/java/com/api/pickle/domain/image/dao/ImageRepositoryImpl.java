@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.api.pickle.domain.image.domain.QImage.image;
 import static com.api.pickle.domain.imagetag.domain.QImageTag.imageTag;
+import static com.api.pickle.domain.tag.domain.QTag.tag;
 
 @RequiredArgsConstructor
 public class ImageRepositoryImpl implements ImageRepositoryCustom{
@@ -35,14 +36,16 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom{
     public Slice<FetchAlbumImagesResponse> findAllImagesByCreatedDateDesc(Long albumId, int pageSize, Long lastImageId) {
         List<FetchAlbumImagesResponse> results = queryFactory
                 .select(new QFetchAlbumImagesResponse(
-                        imageTag.image.id,
-                        imageTag.tag.name,
-                        imageTag.image.imageUrl
+                        image.id,
+                        tag.name,
+                        image.imageUrl
                 ))
-                .from(imageTag)
+                .from(image)
+                .leftJoin(imageTag).on(image.id.eq(imageTag.image.id))
+                .leftJoin(tag).on(tag.id.eq(imageTag.tag.id))
                 .where(lastImageId(lastImageId),
-                        imageTag.image.album.id.eq(albumId))
-                .orderBy(imageTag.image.createdDate.desc())
+                        image.album.id.eq(albumId))
+                .orderBy(image.createdDate.desc())
                 .limit(pageSize + 1)
                 .fetch();
 
