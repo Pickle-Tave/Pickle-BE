@@ -144,6 +144,7 @@
         }
     ],
     "family": "pickle-task-definition",
+    "taskRoleArn": "arn:aws:iam::122971469363:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::122971469363:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "volumes": [],
