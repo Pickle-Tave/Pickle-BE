@@ -3,6 +3,8 @@ package com.api.pickle.domain.sharedalbum.application;
 import com.api.pickle.domain.album.dao.AlbumRepository;
 import com.api.pickle.domain.album.domain.Album;
 import com.api.pickle.domain.album.domain.SharingStatus;
+import com.api.pickle.domain.bookmark.dao.BookmarkRepository;
+import com.api.pickle.domain.bookmark.domain.Bookmark;
 import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.domain.sharedalbum.dto.request.SharedAlbumParticipateRequest;
 import com.api.pickle.domain.sharedalbum.dto.response.SharedAlbumParticipateResponse;
@@ -26,6 +28,7 @@ public class SharedAlbumService {
     private final AlbumRepository albumRepository;
     private final SharedAlbumRepository sharedAlbumRepository;
     private final ParticipantRepository participantRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final MemberUtil memberUtil;
 
     public SharedLinkResponse getSharedAlbumLink(Long albumId, String password){
@@ -49,6 +52,7 @@ public class SharedAlbumService {
 
         Participant participant = Participant.createGuestParticipant(sharedAlbum.getAlbum(), currentMember);
         participantRepository.save(participant);
+        bookmarkRepository.save(Bookmark.builder().participant(participant).build());
         return new SharedAlbumParticipateResponse(participant.getAlbum().getId(), participant.getAlbum().getName());
     }
 
