@@ -72,10 +72,12 @@ public class BookmarkService {
     }
 
     public void updateMarkedStatus(Slice<AlbumSearchResponse> searchResponses, Set<Long> markedSet, Set<Long> unmarkedSet) {
+        List<Long> markedSetByAlbumId = bookmarkRepository.findBookmarkIdsByAlbumIds(markedSet.stream().toList());
+        List<Long> unmarkedSetByAlbumId = bookmarkRepository.findBookmarkIdsByAlbumIds(unmarkedSet.stream().toList());
         searchResponses.getContent().forEach(albumSearchResponse -> {
-            if (markedSet.contains(albumSearchResponse.getAlbumId())) {
+            if (markedSetByAlbumId.contains(albumSearchResponse.getAlbumId())) {
                 albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.MARKED.getValue());
-            } else if (unmarkedSet.contains(albumSearchResponse.getAlbumId())) {
+            } else if (unmarkedSetByAlbumId.contains(albumSearchResponse.getAlbumId())) {
                 albumSearchResponse.setSearchedAlbumMarkedStatus(MarkStatus.UNMARKED.getValue());
             }
         });
