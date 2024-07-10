@@ -4,7 +4,6 @@ import com.api.pickle.domain.album.dto.response.AlbumSearchResponse;
 import com.api.pickle.domain.album.dto.response.QAlbumSearchResponse;
 import com.api.pickle.domain.bookmark.domain.Bookmark;
 import com.api.pickle.domain.bookmark.domain.MarkStatus;
-import com.api.pickle.domain.bookmark.domain.QBookmark;
 import com.api.pickle.domain.bookmark.dto.RedisBookmarkStatusDto;
 import com.api.pickle.domain.participant.domain.Participant;
 import com.api.pickle.global.error.exception.CustomException;
@@ -20,7 +19,6 @@ import java.util.List;
 
 import static com.api.pickle.domain.album.domain.QAlbum.album;
 import static com.api.pickle.domain.bookmark.domain.QBookmark.bookmark;
-import static com.api.pickle.domain.imagetag.domain.QImageTag.imageTag;
 import static com.api.pickle.domain.participant.domain.QParticipant.participant;
 
 @RequiredArgsConstructor
@@ -83,5 +81,16 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom{
         return queryFactory.selectFrom(bookmark)
                             .where(bookmark.participant.in(participants))
                             .fetch();
+    }
+
+    @Override
+    public List<Long> findBookmarkIdsByAlbumIds(List<Long> bookmarkIds) {
+        return queryFactory
+                .select(album.id)
+                .from(bookmark)
+                .join(bookmark.participant, participant)
+                .join(participant.album, album)
+                .where(bookmark.id.in(bookmarkIds))
+                .fetch();
     }
 }

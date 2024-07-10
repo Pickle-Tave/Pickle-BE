@@ -13,4 +13,6 @@ public interface BookmarkRepositoryCustom {
 
     Slice<AlbumSearchResponse> findAlbumByBookmarks(Long memberId, RedisBookmarkStatusDto markLists, int pageSize, Long lastAlbumId);
     List<Bookmark> findByParticipant(List<Participant> participants);
+
+    List<Long> findBookmarkIdsByAlbumIds(List<Long> bookmarkIds);
 }
