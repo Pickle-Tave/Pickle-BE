@@ -2,7 +2,8 @@ package com.api.pickle.domain.auth.domain;
 
 import com.api.pickle.domain.common.model.BaseTimeEntity;
 import jakarta.persistence.Entity;
-import org.springframework.data.annotation.Id;
+
+import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
