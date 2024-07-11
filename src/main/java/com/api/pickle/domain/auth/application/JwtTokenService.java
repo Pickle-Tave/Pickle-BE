@@ -35,7 +35,6 @@ public class JwtTokenService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .memberId(memberId)
                 .token(token)
-                .ttl(jwtUtil.getRefreshTokenExpirationTime())
                 .build();
         refreshTokenRepository.save(refreshToken);
         return token;
@@ -71,7 +70,7 @@ public class JwtTokenService {
         RefreshToken refreshToken = refreshTokenRepository.findById(oldRefreshTokenDto.getMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MISSING_JWT_TOKEN));
         RefreshTokenDto refreshTokenDto = jwtUtil.generateRefreshTokenDto(refreshToken.getMemberId());
-        refreshToken.updateRefreshToken(refreshTokenDto.getToken(), refreshTokenDto.getTtl());
+        refreshToken.updateRefreshToken(refreshTokenDto.getToken());
         refreshTokenRepository.save(refreshToken);
         return refreshTokenDto;
     }
