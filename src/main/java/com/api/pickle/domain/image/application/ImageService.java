@@ -24,6 +24,7 @@ import com.api.pickle.domain.participant.dao.ParticipantRepository;
 import com.api.pickle.global.error.exception.CustomException;
 import com.api.pickle.global.error.exception.ErrorCode;
 import com.api.pickle.global.util.MemberUtil;
+import com.api.pickle.infra.config.fcm.FcmService;
 import com.api.pickle.infra.config.feign.ImageClassificationClient;
 import com.api.pickle.infra.config.s3.S3Properties;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,8 @@ import java.util.stream.IntStream;
 
 import static com.api.pickle.domain.image.domain.Image.createImage;
 import static com.api.pickle.domain.imagetag.domain.ImageTag.createImageTag;
+import static com.api.pickle.global.common.constants.FcmConstants.PUSH_SERVICE_CONTENT;
+import static com.api.pickle.global.common.constants.FcmConstants.PUSH_SERVICE_TITLE;
 
 @Service
 @Slf4j
@@ -55,6 +58,7 @@ public class ImageService {
     private final MemberTagRepository memberTagRepository;
     private final ImageTagRepository imageTagRepository;
     private final ParticipantRepository participantRepository;
+    private final FcmService fcmService;
 
     public PresignedUrlResponse createImagePresignedUrl(PresignedUrlRequest request) {
         final Member member = memberUtil.getCurrentMember();
@@ -122,6 +126,11 @@ public class ImageService {
                 .flatMap(Collection::stream)
                 .map(imageUrl -> createImage(currentMember, imageUrl))
                 .forEach(imageRepository::save);
+
+        fcmService.sendMessageSync(
+                currentMember.getFcmInfo().getFcmToken(),
+                PUSH_SERVICE_TITLE,
+                String.format(PUSH_SERVICE_CONTENT, currentMember.getNickname()));
 
         return response;
     }
