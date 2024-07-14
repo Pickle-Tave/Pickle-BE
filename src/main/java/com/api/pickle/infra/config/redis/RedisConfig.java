@@ -12,8 +12,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 
 import java.time.Duration;
 
-@EnableRedisRepositories(
-        enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+@EnableRedisRepositories
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
