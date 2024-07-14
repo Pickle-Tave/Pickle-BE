@@ -23,7 +23,7 @@
 
 ### 🏛️ Architecture
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/9862be44-9252-42f6-bcb1-86259b31cdc9" width="600"/>
+  <img src="https://github.com/user-attachments/assets/9862be44-9252-42f6-bcb1-86259b31cdc9" width="800"/>
 </p>
 <br/>
 
