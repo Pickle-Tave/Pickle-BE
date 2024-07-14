@@ -11,13 +11,15 @@
 ## 3️⃣ Tech
 
 ### 📦️ Dependency
-- Gradle : `8.7`
-- Java : `17`
-- Spring Boot : `3.2.5`
-- MySQL : `8.0.33`
-- QueryDSL : `5.0.0`
-- Swagger : `2.2.0`
-- Spring Cloud : `2023.0.0`
+```
+- Gradle 8.7
+- Java 17
+- Spring Boot 3.2.5
+- MySQL 8.0.33
+- QueryDSL 5.0.0
+- Swagger 2.2.0
+- Spring Cloud 2023.0.0
+```
 
 ### 🏛️ Architecture
 <p align="center">
