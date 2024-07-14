@@ -5,8 +5,12 @@
 | <a href="https://github.com/ht3064"> <img src="https://avatars.githubusercontent.com/u/145987233?v=4" width="140px;" alt="ht3064"/></a> | <a href="https://github.com/alswjdghks"> <img src="https://avatars.githubusercontent.com/u/132763978?v=4" width="140px;" alt="alswjdghks"/></a>| <a href="https://github.com/iiqcov"><img src="https://avatars.githubusercontent.com/u/154600308?v=4" width="140px;" alt="iiqcov"/></a> |
 | 최현태 | 민정환 | 유지선 |
 
+<br/>
+
 ## 2️⃣ Project
 - #### 🏠 [Project Notion](https://www.notion.so/MAIN-PAGE-ac1ac9a4178d495a8e56e3b8cf4e65ac)
+
+<br/>
 
 ## 3️⃣ Tech
 
@@ -117,6 +121,8 @@
 	│       ├── application-s3.yml
 	│       ├── application-fastapi.yml
 	│       └── application-security.yml
+
+<br/>
 
 ## 4️⃣ Convention
 
