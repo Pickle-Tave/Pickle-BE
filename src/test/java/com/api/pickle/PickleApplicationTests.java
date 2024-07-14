@@ -7,8 +7,4 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class PickleApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
 }
