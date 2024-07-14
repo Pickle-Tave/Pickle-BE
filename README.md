@@ -41,7 +41,7 @@
 
 #### CICD - <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white">
 
-#### AWS - <img src="https://img.shields.io/badge/AWS ECS-FF9900?style=for-the-&logo=amazonecs&logoColor=white"> <img src ="https://img.shields.io/badge/AWS S3-69A31?style=for-the-social&logo=amazons3&logoColor=white"> <img src="https://img.shields.io/badge/AWS RDS-527FFF?style=for-the-social&logo=amazonrds&logoColor=white">  <img src ="https://img.shields.io/badge/AWS ElastiCache-C925D1?style=for-the-social&logo=amazonelasticache&logoColor=white"> 
+#### AWS - <img src="https://img.shields.io/badge/AWS EC2-FF9900?style=for-the-&logo=amazonec2&logoColor=white"> <img src="https://img.shields.io/badge/AWS ECS-FF9900?style=for-the-&logo=amazonecs&logoColor=white"> <img src="https://img.shields.io/badge/AWS Fargate-FF9900?style=for-the-&logo=awsfargate&logoColor=white"> <img src ="https://img.shields.io/badge/AWS S3-69A31?style=for-the-social&logo=amazons3&logoColor=white"> <img src="https://img.shields.io/badge/AWS RDS-527FFF?style=for-the-social&logo=amazonrds&logoColor=white">  <img src ="https://img.shields.io/badge/AWS ElastiCache-C925D1?style=for-the-social&logo=amazonelasticache&logoColor=white"> <img src="https://img.shields.io/badge/ AWS Secretes Manager-DD344C?style=for-the-social&logo=awssecretsmanager&logoColor=white">
 
 #### Code Coverage - <img src="https://img.shields.io/badge/SonarCloud-F3702A?logo=sonarcloud&logoColor=fff">
 
