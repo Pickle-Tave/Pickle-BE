@@ -47,6 +47,7 @@
 
 #### Other - <img src="https://img.shields.io/badge/ Swagger-6DB33F?style=for-the-social&logo=swagger&logoColor=white"> <img src="https://img.shields.io/badge/IntelliJIDEA-000000.svg?logo=intellij-idea&logoColor=white"> <img src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=fff">
 
+<br/>
 
 ### 🔍 ERD
 <p align="center">
