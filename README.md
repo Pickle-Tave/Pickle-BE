@@ -49,7 +49,7 @@
 
 #### Code Coverage - <img src="https://img.shields.io/badge/SonarCloud-F3702A?logo=sonarcloud&logoColor=fff">
 
-#### Other - <img src="https://img.shields.io/badge/ Swagger-6DB33F?style=for-the-social&logo=swagger&logoColor=white"> <img src="https://img.shields.io/badge/IntelliJIDEA-000000.svg?logo=intellij-idea&logoColor=white"> <img src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=fff">
+#### Other - <img src="https://img.shields.io/badge/ Swagger-6DB33F?style=for-the-social&logo=swagger&logoColor=white"> <img src="https://img.shields.io/badge/IntelliJIDEA-000000.svg?logo=intellij-idea&logoColor=white"> <img src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=fff"> <img src="https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white">
 
 <br/>
 
