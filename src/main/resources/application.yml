@@ -2,16 +2,14 @@ spring:
   profiles:
     active: dev
     group:
-      dev:
-        - s3
-        - security
-        - redis
-        - fastapi
-      prod:
-        - s3
-        - security
-        - redis
-        - fastapi
+      dev: "dev"
+      prod: "prod"
+      test: "test"
+    include:
+      - s3
+      - security
+      - redis
+      - fastapi
 
 management:
   endpoints:
