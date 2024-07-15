@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - develop
-      - chore/72-sonarcloud-setting
 
 jobs:
   sonarcloud:
@@ -36,6 +35,12 @@ jobs:
         with:
           arguments: check
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+        env:
+          AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
+          JWT_ACCESS_TOKEN_EXPIRATION_TIME: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}
+          JWT_REFRESH_TOKEN_EXPIRATION_TIME: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}
+          FAST_API_SERVER_URL: ${{ secrets.FAST_API_SERVER_URL }}
+          FCM_CERTIFICATION: ${{ secrets.FCM_CERTIFICATION }}
 
       - name: SonarCloud scan
         env:
